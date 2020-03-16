@@ -6,6 +6,7 @@ import QtQuick.Controls 2.13 //Button사용
 import QtQuick.Dialogs 1.2
 import QtQuick.Shapes 1.12 //핀모양 만들기
 
+
 Window {
     /*윈도우 속성값들*/
     visible: true
@@ -17,6 +18,8 @@ Window {
         id: mapPlugin
         name: "osm"
     }
+
+
 
 
     Map{
@@ -32,13 +35,11 @@ Window {
         center: QtPositioning.coordinate(xLati,yLongi)
         /*디버깅시 지도확대 정도 값*/
         zoomLevel: 16
-        //bearing: 20 회전값
-
 
         Text {
             anchors.right: parent.right
             anchors.rightMargin: 30
-            text: "왼쪽  더블클릭 시 확대\n오른쪽 더블클릭 시 축소\n길게 누르면 핀생성"
+            text: qsTr("왼쪽  더블클릭 시 확대\n오른쪽 더블클릭 시 축소\n길게 누르면 핀생성\n현재 줌레벨 : "+ (map.zoomLevel).toFixed(4))
             color: "grey"
             font.pixelSize: 16
             opacity: 0.9
@@ -80,6 +81,7 @@ Window {
                 longitudeE.text = (crd.longitude).toFixed(4)
                 /* 위도 경도 값을 콘솔창에 소수점 15자리(최대 출력 가능한 소수점)까지 출력 */
                 console.log("위도: "+crd.latitude, "경도: "+crd.longitude)
+
             }
             /*더블 클릭 했을 시 이벤트 핸들러*/
             onDoubleClicked:{
@@ -99,7 +101,7 @@ Window {
                 var crd = map.toCoordinate(Qt.point(mouseX, mouseY))
                 console.log(crd)
                 /*있던 핀 제거*/
-                markerModel.clear()
+//                markerModel.clear()
                 /*위치에 핀 표시*/
                 markerModel.append({ "latitude": crd.latitude, "longitude": crd.longitude })
                 latitudeE.text = (crd.latitude).toFixed(4)
@@ -144,7 +146,6 @@ Window {
                             fillColor: "red"
 
                             /*마우스 포인트 끝지점 오차계산*/
-
                             /*상하 오차값*/
                             property real half: e1.width * 0.5
                             /*좌우 오차값*/
@@ -200,6 +201,7 @@ Window {
                 text: map.xLati
             }
 
+            /*위도 TextEdit border만들기*/
             Rectangle{
                 x: 78
                 y: 27
@@ -231,7 +233,7 @@ Window {
                 font.pixelSize: 20
                 text: map.yLongi
             }
-
+            /*경도 TextEdit border만들기*/
             Rectangle{
                 x: 78
                 y: 65
@@ -284,6 +286,7 @@ Window {
                         /* 입력된 좌표로 이동 */
                         map.center = QtPositioning.coordinate(latitudeE.text, longitudeE.text)
                         console.log("해당 좌표로 이동합니다.")
+                        map.zoomLevel = 15
                     }
                 }
             }
