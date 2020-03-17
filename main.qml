@@ -5,7 +5,7 @@ import QtPositioning 5.8
 import QtQuick.Controls 2.13 //Button사용
 import QtQuick.Dialogs 1.2
 import QtQuick.Shapes 1.12 //핀모양 만들기
-
+import "weather.mjs" as MyScript
 
 Window {
     /*윈도우 속성값들*/
@@ -18,9 +18,6 @@ Window {
         id: mapPlugin
         name: "osm"
     }
-
-
-
 
     Map{
         id:map
@@ -82,7 +79,9 @@ Window {
                 /* 위도 경도 값을 콘솔창에 소수점 15자리(최대 출력 가능한 소수점)까지 출력 */
                 console.log("위도: "+crd.latitude, "경도: "+crd.longitude)
 
+                MyScript.func(latitudeE.text, longitudeE.text)
             }
+
             /*더블 클릭 했을 시 이벤트 핸들러*/
             onDoubleClicked:{
                 /* 왼쪽 버튼 더블클릭 했을 시*/
