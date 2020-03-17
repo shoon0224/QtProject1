@@ -36,5 +36,4 @@ DISTFILES += \
     lib/index.js \
     lib/kma-js.js \
     lib/weather.js \
-    package.json \
-    weather.mjs
+    package.json
