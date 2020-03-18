@@ -58,7 +58,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 #HEADERS
-HEADERS +=
+HEADERS += \
+    appmodel.h
 #헤더파일을 적는다.
 
 
