@@ -6,6 +6,10 @@ import QtQuick.Controls 2.13 //Button사용
 import QtQuick.Dialogs 1.2
 import QtQuick.Shapes 1.12 //핀모양 만들기
 
+
+// 14a836908caa68e11b37f96d8c06c91d
+// api key
+
 Window {
     /*윈도우 속성값들*/
     visible: true
@@ -67,6 +71,28 @@ Window {
             /*마우스 버튼 영역에서 반응을 가능하게 하는 속성*/
             acceptedButtons: Qt.LeftButton | Qt.RightButton
 
+            function func()
+            {
+                var doc = new XMLHttpRequest();
+                doc.onreadystatechange = function() {
+                    if(doc.readyState === XMLHttpRequest.DONE) {
+                        var jsonObject = doc.responseText
+                        loaded(jsonObject);
+                    }
+                }
+                doc.open("GET", "api.openweathermap.org/data/2.5/weather?lat="+ latitudeE.text + "& lon = " + longitudeE.text +"& appid =" + "14a836908caa68e11b37f96d8c06c91d")
+                doc.send();
+            }
+            function showRequestInfo(text) {
+                console.log(text)
+            }
+            function loaded(jsonObject)
+            {
+                showRequestInfo("weather : " + data);
+                console.log(data)
+            }
+
+
             /* 클릭 했을 시 이벤트 핸들러 */
             onClicked:  {
                 /* 마우스 포인터 지점의 x, y 값의 위도경도 좌표값을 crd 변수에 대입 */
@@ -77,6 +103,31 @@ Window {
                 longitudeE.text = (crd.longitude).toFixed(4)
                 /* 위도 경도 값을 콘솔창에 소수점 15자리(최대 출력 가능한 소수점)까지 출력 */
                 console.log("위도: "+crd.latitude, "경도: "+crd.longitude)
+
+                func()
+
+
+//                var apiURL = "api.openweathermap.org/data/2.5/weather?lat="+ latitudeE.text + "& lon = " + longitudeE.text +"& appid =" + "14a836908caa68e11b37f96d8c06c91d"
+//                        $.ajax({
+//                            url: apiURL,
+//                            dataType: "json",
+//                            type: "GET",
+//                            async: "false",
+//                            success: function(resp) {
+//                                console.log(resp);
+//                                console.log("현재온도 : "+ (resp.main.temp- 273.15) );
+//                                console.log("현재습도 : "+ resp.main.humidity);
+//                                console.log("날씨 : "+ resp.weather[0].main );
+//                                console.log("상세날씨설명 : "+ resp.weather[0].description );
+//                                console.log("날씨 이미지 : "+ resp.weather[0].icon );
+//                                console.log("바람   : "+ resp.wind.speed );
+//                                console.log("나라   : "+ resp.sys.country );
+//                                console.log("도시이름  : "+ resp.name );
+//                                console.log("구름  : "+ (resp.clouds.all) +"%" );
+//                            }
+//                        })
+
+
             }
 
             /*더블 클릭 했을 시 이벤트 핸들러*/
