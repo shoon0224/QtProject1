@@ -30,7 +30,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
-    geolocation.js \
     kma-js.js \
     lib/geolocation.js \
     lib/index.js \
