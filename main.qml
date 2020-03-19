@@ -5,15 +5,33 @@ import QtPositioning 5.8
 import QtQuick.Controls 2.13 //Button사용
 import QtQuick.Dialogs 1.2
 import QtQuick.Shapes 1.12 //핀모양 만들기
+import WeatherInfo 1.0
 
 
 // 14a836908caa68e11b37f96d8c06c91d // openweathermap key
 
 Window {
     /*윈도우 속성값들*/
+
     visible: true
     width: 512
     height: 512
+
+
+    /*appmodel.cpp 가*/
+    AppModel {
+        id: model
+        onReadyChanged: {
+            if (model.ready){
+                console.log("날씨를 불러왔습니다.")
+                }
+            else{
+                console.log("날씨를 불러오는 중입니다.")
+                }
+        }
+    }
+
+
 
     Plugin{
         /*Api 관련 값인 것 같음*/
@@ -45,6 +63,21 @@ Window {
             z: parent.z + 10
         }
 
+        /*날씨 표시 구영*/
+        Rectangle{
+            id: weatherinfo
+            x:60
+            y:130
+            width: 100
+            height:100
+            color: "red"
+            Text {
+                id: weathertext
+                text: "여기날씨"
+            }
+        }
+
+
         /*맵 중앙 십자표시*/
         Rectangle{
             width:9
@@ -71,29 +104,6 @@ Window {
             /*마우스 버튼 영역에서 반응을 가능하게 하는 속성*/
             acceptedButtons: Qt.LeftButton | Qt.RightButton
 
-            /* XMHttpRequest 객체를 활용
-                        function func()
-                        {
-                            var doc = new XMLHttpRequest();
-                            doc.onreadystatechange = function() {
-                                if(doc.readyState === XMLHttpRequest.DONE) {
-                                    var jsonObject = doc.responseText
-                                    loaded(jsonObject);
-                                }
-                            }
-                            doc.open("GET", "api.openweathermap.org/data/2.5/weather?lat="+ latitudeE.text + "& lon = " + longitudeE.text +"& appid =" + "14a836908caa68e11b37f96d8c06c91d")
-                            doc.send();
-                        }
-                        function showRequestInfo(text) {
-                            console.log(text)
-                        }
-                        function loaded(jsonObject)
-                        {
-                            showRequestInfo("weather : " + data);
-                            console.log(data)
-                        }
-            */
-
             /* 클릭 했을 시 이벤트 핸들러 */
             onClicked:  {
                 /* 마우스 포인터 지점의 x, y 값의 위도경도 좌표값을 crd 변수에 대입 */
@@ -104,6 +114,9 @@ Window {
                 longitudeE.text = (crd.longitude).toFixed(4)
                 /* 위도 경도 값을 콘솔창에 소수점 15자리(최대 출력 가능한 소수점)까지 출력 */
                 console.log("위도: "+crd.latitude, "경도: "+crd.longitude)
+
+                console.log(model.hasValidWeather ? model.weather.weatherDescription : "no weather data")
+                console.log((model.hasValidCity ? model.city : "Unknown location") + (model.useGps ? " (GPS)" : ""))
 
                 /* openweathermap url 사용하여 시도
                 var apiURL = "api.openweathermap.org/data/2.5/weather?lat="+ latitudeE.text + "& lon = " + longitudeE.text +"& appid =" + "14a836908caa68e11b37f96d8c06c91d"

@@ -9,7 +9,8 @@ TEMPLATE = app
 
 #----------------------------------------------------------------------------------------------
 
-QT += quick
+QT += core network positioning qml quick
+requires(qtConfig(bearermanagement))
 #프로젝트에 사용될 Qt의 모듈을 지정한다. default값은 core와 gui이다.
 #이는 QtGui 모듈을 포함한다는 의미
 #QT에 지정되는 모듈은 대략 core gui network opengl sql svg xml xmlpatterns qt3support 등이 있다.
@@ -38,6 +39,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #----------------------------------------------------------------------------------------------
 
 SOURCES += \
+        appmodel.cpp \
         main.cpp
 #소스파일이다.
 
