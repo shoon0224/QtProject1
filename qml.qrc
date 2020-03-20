@@ -13,5 +13,7 @@
         <file>icons/weather-sunny-very-few-clouds.png</file>
         <file>icons/weather-sunny.png</file>
         <file>icons/weather-thundershower.png</file>
+        <file>components/BigForecastIcon.qml</file>
+        <file>components/WeatherIcon.qml</file>
     </qresource>
 </RCC>

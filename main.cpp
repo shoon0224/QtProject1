@@ -9,6 +9,7 @@
 
 #include "appmodel.h"
 
+
 int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
@@ -19,7 +20,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<AppModel>("WeatherInfo", 1, 0, "AppModel");
 
     qRegisterMetaType<WeatherData>();
-    const QString mainQmlApp = QStringLiteral("qrc:///weatherinfo.qml");
+    const QString mainQmlApp = QStringLiteral("");
     QQuickView view;
     view.setSource(QUrl(mainQmlApp));
     view.setResizeMode(QQuickView::SizeRootObjectToView);

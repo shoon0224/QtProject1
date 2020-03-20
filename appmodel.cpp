@@ -261,7 +261,7 @@ void AppModel::networkSessionOpened()
         d->src->startUpdates();
     } else {
         d->useGps = false;
-        d->city = "Brisbane";
+        d->city = "busan";
         emit cityChanged();
         this->refreshWeather();
     }
@@ -298,7 +298,7 @@ void AppModel::queryCity()
     longitude.setNum(d->coord.longitude());
     latitude.setNum(d->coord.latitude());
 
-    QUrl url("http://api.openweathermap.org/data/2.5/weather");
+    QUrl url("http://api.openweathermap.org/data/2.5/weather?");
     QUrlQuery query;
     query.addQueryItem("lat", latitude);
     query.addQueryItem("lon", longitude);
@@ -311,6 +311,7 @@ void AppModel::queryCity()
     // connect up the signal right away
     connect(rep, &QNetworkReply::finished,
             this, [this, rep]() { handleGeoNetworkData(rep); });
+
 }
 
 void AppModel::positionError(QGeoPositionInfoSource::Error e)
@@ -324,7 +325,7 @@ void AppModel::positionError(QGeoPositionInfoSource::Error e)
 
     // activate simulation mode
     d->useGps = false;
-    d->city = "Brisbane";
+    d->city = "busan";
     emit cityChanged();
     this->refreshWeather();
 }
@@ -377,7 +378,7 @@ void AppModel::refreshWeather()
         qCDebug(requestsLog) << "refreshing weather skipped (no city)";
         return;
     }
-    qCDebug(requestsLog) << "refreshing weather";
+//    qCDebug(requestsLog) << "날씨 새로고침";
     QUrl url("http://api.openweathermap.org/data/2.5/weather");
     QUrlQuery query;
 
@@ -399,7 +400,7 @@ static QString niceTemperatureString(double t)
 
 void AppModel::handleWeatherNetworkData(QNetworkReply *networkReply)
 {
-    qCDebug(requestsLog) << "got weather network data";
+//    qCDebug(requestsLog) << "got weather network data";
     if (!networkReply)
         return;
 
@@ -451,7 +452,7 @@ void AppModel::handleWeatherNetworkData(QNetworkReply *networkReply)
 
 void AppModel::handleForecastNetworkData(QNetworkReply *networkReply)
 {
-    qCDebug(requestsLog) << "got forecast";
+//    qCDebug(requestsLog) << "got forecast";
     if (!networkReply)
         return;
 
@@ -521,6 +522,7 @@ bool AppModel::hasValidWeather() const
                               (d->now.weatherIcon().size() > 1) &&
                               d->now.weatherIcon() != "");
 }
+
 
 WeatherData *AppModel::weather() const
 {

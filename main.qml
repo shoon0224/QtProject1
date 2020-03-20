@@ -6,13 +6,12 @@ import QtQuick.Controls 2.13 //Button사용
 import QtQuick.Dialogs 1.2
 import QtQuick.Shapes 1.12 //핀모양 만들기
 import WeatherInfo 1.0
-
+import "components"
 
 // 14a836908caa68e11b37f96d8c06c91d // openweathermap key
 
 Window {
     /*윈도우 속성값들*/
-
     visible: true
     width: 512
     height: 512
@@ -23,14 +22,12 @@ Window {
         id: model
         onReadyChanged: {
             if (model.ready){
-                console.log("날씨를 불러왔습니다.")
-                }
+                console.log("날씨 데이터를 불러왔습니다.")
+            }
             else{
-                console.log("날씨를 불러오는 중입니다.")
-                }
+                console.log("날씨 데이터를 불러오는 중입니다.")
         }
     }
-
 
 
     Plugin{
@@ -53,6 +50,33 @@ Window {
         /*디버깅시 지도확대 정도 값*/
         zoomLevel: 16
 
+        property alias geocodeModel: geocodeModel
+        signal showGeocodeInfo()
+        signal geocodeFinished()
+        signal coordinatesCaptured(double latitude, double longitude)
+        signal showMainMenu(variant coordinate)
+        signal showPointMenu(variant coordinate)
+
+        GeocodeModel {
+            id: geocodeModel
+            plugin: map.plugin
+            onStatusChanged: {
+                if ((status == GeocodeModel.Ready) || (status == GeocodeModel.Error))
+                    map.geocodeFinished()
+            }
+            onLocationsChanged:
+            {
+                if (count == 1) {
+                    map.center.latitude = get(0).coordinate.latitude
+                    map.center.longitude = get(0).coordinate.longitude
+                }
+            }
+        }
+
+        MapItemView {
+            model: geocodeModel
+        }
+
         Text {
             anchors.right: parent.right
             anchors.rightMargin: 30
@@ -63,18 +87,28 @@ Window {
             z: parent.z + 10
         }
 
-        /*날씨 표시 구영*/
-        Rectangle{
-            id: weatherinfo
-            x:60
-            y:130
+        /*날씨 표시 구역*/
+        BigForecastIcon {
+            id: current
+            x:5
+            y:150
+
+            //아이콘 크기
             width: 100
-            height:100
-            color: "red"
-            Text {
-                id: weathertext
-                text: "여기날씨"
-            }
+            height: 100
+            opacity: 0.7
+
+            weatherIcon: (model.hasValidWeather
+                          ? model.weather.weatherIcon
+                          : "01d")
+            //! [3]
+            topText: (model.hasValidWeather
+                      ? model.weather.temperature
+                      : "??")
+            bottomText: (model.hasValidWeather
+                         ? model.weather.weatherDescription
+                         : "No weather data")
+            //! [4]
         }
 
 
@@ -115,183 +149,13 @@ Window {
                 /* 위도 경도 값을 콘솔창에 소수점 15자리(최대 출력 가능한 소수점)까지 출력 */
                 console.log("위도: "+crd.latitude, "경도: "+crd.longitude)
 
+                console.log()
+
+                console.log(model.city ="seoul")
                 console.log(model.hasValidWeather ? model.weather.weatherDescription : "no weather data")
-                console.log((model.hasValidCity ? model.city : "Unknown location") + (model.useGps ? " (GPS)" : ""))
+                console.log(model.hasValidWeather ? model.weather.temperature : "??")
 
-                /* openweathermap url 사용하여 시도
-                var apiURL = "api.openweathermap.org/data/2.5/weather?lat="+ latitudeE.text + "& lon = " + longitudeE.text +"& appid =" + "14a836908caa68e11b37f96d8c06c91d"
-                        $.ajax({
-                            url: apiURL,
-                            dataType: "json",
-                            type: "GET",
-                            asy도nc: "false",
-                            success: function(resp) {
-                                console.log(resp);
-                                console.log("현재온도 : "+ (resp.main.temp- 273.15) );
-                                console.log("현재습도 : "+ resp.main.humidity);
-                                console.log("날씨 : "+ resp.weather[0].main );
-                                console.log("상세날씨설명 : "+ resp.weather[0].description );
-                                console.log("날씨 이미지 : "+ resp.weather[0].icon );
-                                console.log("바람   : "+ resp.wind.speed );
-                                console.log("나라   : "+ resp.sys.country );
-                                console.log("도시이름  : "+ resp.name );
-                                console.log("구름  : "+ (resp.clouds.all) +"%" );
-                            }
-                        })
-                */
-
-                /* kma.js 라이브러리 중 weather.js 부분
-                const feedParser = require('feedparser-promised')
-                    , moment = require('moment')
-                    , kma = require('../lib/kma');
-
-                class Weather {
-
-                    townWeather(latitude, longitude) {
-                        return new Promise((resolve, reject) => {
-                            kma.convertBcode(latitude, longitude)
-                                .then(bcode => {
-                                    const url = `http://www.kma.go.kr/wid/queryDFSRSS.jsp?zone=${bcode}`;
-                                    return feedParser.parse(url)
-                                })
-                                .then(feedData => {
-                                    let data;
-
-                                    if (feedData.length === 0) return reject({
-                                        title: `날씨 정보를 가져올 수 없습니다`,
-                                        message: `${bcode}에 해당하는 날씨 정보를 가져올 수 없습니다`,
-                                        link: url
-                                    });
-
-                                    const weather = feedData[0];
-                                    const date = moment(weather['meta']['rss:pubdate']['#'], 'YYYY년 MM월 DD일 (ddd)요일 HH:mm', 'ko');
-
-                                    // 날씨 데이터
-                                    data = {
-                                        title: weather.title,
-                                        category: weather.categories[0],
-                                        author: weather.author,
-                                        lastUpdated: moment(date).format(),
-                                        info: []
-                                    };
-
-
-                                    const weatherInfo = weather['rss:description']['body']['data'];
-                                    weatherInfo.forEach(info => {
-                                        const hour = info['hour']['#'];
-                                        const day = info['day']['#'];
-                                        const temp = info['temp']['#'];
-                                        const tmx = info['tmx']['#'];
-                                        const tmn = info['tmn']['#'];
-                                        const sky = info['sky']['#'];
-                                        const pty = info['pty']['#'];
-                                        const wfkor = info['wfkor']['#'];
-                                        const wfen = info['wfen']['#'];
-                                        const pop = info['pop']['#'];
-                                        const r12 = info['r12']['#'];
-                                        const s12 = info['s12']['#'];
-                                        const ws = info['ws']['#'];
-                                        const wd = info['wd']['#'];
-                                        const wdkor = info['wdkor']['#'];
-                                        const wden = info['wden']['#'];
-                                        const reh = info['reh']['#'];
-                                        const r06 = info['r06']['#'];
-                                        const s06 = info['s06']['#'];
-
-                                        let newInfo = {
-                                            time: moment(date)
-                                                .add(day, 'days')
-                                                .hours(hour)
-                                                .format(),
-                                            temperature: {
-                                                current: Number(temp),
-                                                high: tmx === -999 ? null : tmx,
-                                                min: tmn === -999 ? null : tmn
-                                            },
-                                            sky: {
-                                                code: Number(sky),
-                                                value: this.parseSkyCode(sky)
-                                            },
-                                            rain: {
-                                                code: Number(pty),
-                                                value: this.parseRainyProbabilityCode(pty),
-
-                                                probability: Number(pop),
-                                                expect: {
-                                                    6: {
-                                                        rainfall: Number(r06),
-                                                        snowfall: Number(s06)
-                                                    },
-                                                    12: {
-                                                        rainfall: Number(r12),
-                                                        snowfall: Number(s12)
-                                                    }
-                                                }
-                                            },
-                                            weather: {
-                                                value: {ko: wfkor, en: wfen}
-                                            },
-                                            wind: {
-                                                speed: Number(Number(ws).toFixed(2)),
-                                                direction: {
-                                                    code: Number(wd),
-                                                    value: {
-                                                        ko: wdkor,
-                                                        en: wden
-                                                    }
-                                                }
-                                            },
-                                            humidity: Number(reh)
-                                        };
-
-                                        data.info.push(newInfo);
-                                    });
-
-                                    resolve(data);
-                                })
-                                .catch(error => {
-                                    reject(error);
-                                });
-                        });
-                    }
-
-                    parseSkyCode(skyCode) {
-                        switch (skyCode | 0) {
-                            case 1:
-                                return '맑음';
-                            case 2:
-                                return '구름조금';
-                            case 3:
-                                return '구름많음';
-                            case 4:
-                                return '흐림';
-                            default:
-                                return null;
-                        }
-                    }
-
-                    parseRainyProbabilityCode(pty) {
-                        switch (pty | 0) {
-                            case 0:
-                                return '없음';
-                            case 1:
-                                return '비';
-                            case 2:
-                                return '비/눈';
-                            case 3:
-                                return '눈/비';
-                            case 4:
-                                return '눈';
-                            default:
-                                return null;
-                        }
-                    }
-                }
-
-                module.exports = new Weather();
-            */
             }
-
             /*더블 클릭 했을 시 이벤트 핸들러*/
             onDoubleClicked:{
                 /* 왼쪽 버튼 더블클릭 했을 시*/
@@ -390,7 +254,7 @@ Window {
             border.width:1
 
             Text { //위도
-                id:lat
+                id:latT
                 x:30
                 y:20
                 font.pixelSize:20
@@ -424,7 +288,7 @@ Window {
             }
 
             Text { //경도
-                id:longi
+                id:longiT
                 x: 30
                 y: 60
                 font.pixelSize: 20
