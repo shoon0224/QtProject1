@@ -59,11 +59,16 @@
 #include <QtPositioning/QGeoPositionInfoSource>
 
 //! [0]
-class WeatherData : public QObject {
+class WeatherData : public QObject { //QObject를 상속 받은 WeatherData 클래스 선언
     Q_OBJECT
     Q_PROPERTY(QString dayOfWeek
                READ dayOfWeek WRITE setDayOfWeek
                NOTIFY dataChanged)
+    //QString 타입 설정값 dayOfWeek를 qml로 전달
+    //Q_PROPERTY(type name READ name WRITE setname NOTIFY nameChanged)
+    //타입(type)과 읽을 때 함수(READ), 수정 시 함수(WRITE), 변경 시 호출할 시그널(NOTIFY) 작성
+    //public으로 가서 QString dayOfWeek(); 선언
+
     Q_PROPERTY(QString weatherIcon
                READ weatherIcon WRITE setWeatherIcon
                NOTIFY dataChanged)
@@ -78,12 +83,12 @@ public:
     explicit WeatherData(QObject *parent = 0);
     WeatherData(const WeatherData &other);
 
-    QString dayOfWeek() const;
+    QString dayOfWeek() const; //함수 작성
     QString weatherIcon() const;
     QString weatherDescription() const;
     QString temperature() const;
 
-    void setDayOfWeek(const QString &value);
+    void setDayOfWeek(const QString &value);//함수작성
     void setWeatherIcon(const QString &value);
     void setWeatherDescription(const QString &value);
     void setTemperature(const QString &value);

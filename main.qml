@@ -26,12 +26,13 @@ Window {
             }
             else{
                 console.log("날씨 데이터를 불러오는 중입니다.")
+            }
         }
     }
 
 
     Plugin{
-        /*Api 관련 값인 것 같음*/
+        /*Map Api 관련 값인 것 같음*/
         id: mapPlugin
         name: "osm"
     }
@@ -57,6 +58,7 @@ Window {
         signal showMainMenu(variant coordinate)
         signal showPointMenu(variant coordinate)
 
+        /*위도, 경도 좌표 입력 시 해당 좌표로 이동*/
         GeocodeModel {
             id: geocodeModel
             plugin: map.plugin
@@ -67,6 +69,7 @@ Window {
             onLocationsChanged:
             {
                 if (count == 1) {
+                    /*해당 좌표로 지도가 중심이되어 이동함*/
                     map.center.latitude = get(0).coordinate.latitude
                     map.center.longitude = get(0).coordinate.longitude
                 }
@@ -154,6 +157,7 @@ Window {
                 console.log(model.city ="seoul")
                 console.log(model.hasValidWeather ? model.weather.weatherDescription : "no weather data")
                 console.log(model.hasValidWeather ? model.weather.temperature : "??")
+                console.log(model.hasValidCoord)
 
             }
             /*더블 클릭 했을 시 이벤트 핸들러*/

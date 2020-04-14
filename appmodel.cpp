@@ -294,13 +294,17 @@ void AppModel::queryCity()
     d->throttle.start();
     d->minMsBeforeNewRequest = (d->nErrors + 1) * d->baseMsBeforeNewRequest;
 
-    QString latitude, longitude;
-    longitude.setNum(d->coord.longitude());
+    QString latitude, longitude; //Qstring 클래스의 객체 latitude, longitude 선언
+    longitude.setNum(d->coord.longitude()); //longitude의 setNum함수가 파라미터 값으로 AppModelPrivate클래스의 coord객체가 longitude()함수를 호출한다??
     latitude.setNum(d->coord.latitude());
+
+    /* latitude() 함수의 경로를 따라가보면 함수뒤에 const가 붙은 구문이 있는데 이건 이 함수 안에서는 어떤 변수도 바꿀 수 없음을 뜻한다. */
+    /* 함수가 클래스 멤버인 경우에만 const 키워드를 함수 뒤에 삽입 할 수 있으며 해당 함수가 속한 객체의 멤버 변수를 변경 할 수 없다는 뜻이다.*/
+    /* 또한 const가 붙은 함수 내에서는 const가 붙은 다른 함수를 제외한 일반 함수는 호출하지 못한다.*/
 
     QUrl url("http://api.openweathermap.org/data/2.5/weather?");
     QUrlQuery query;
-    query.addQueryItem("lat", latitude);
+    query.addQueryItem("lat", latitude); // key="lat", value=latitude
     query.addQueryItem("lon", longitude);
     query.addQueryItem("mode", "json");
     query.addQueryItem("APPID", d->app_ident);
