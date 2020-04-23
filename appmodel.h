@@ -145,7 +145,6 @@ public:
     bool hasSource() const;
     bool useGps() const;
     bool hasValidCity() const;
-    bool hasValidCoord() const;// 내듬가만듬
     bool hasValidWeather() const;
     void setUseGps(bool value);
     void hadError(bool tryAgain);
