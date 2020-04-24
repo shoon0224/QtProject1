@@ -1,4 +1,4 @@
-/****************************************************************************
+  /****************************************************************************
 **
 ** Copyright (C) 2017 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
@@ -141,7 +141,7 @@ void WeatherData::setTemperature(const QString &value)
     emit dataChanged();
 }
 
-class AppModelPrivate
+class AppModelPrivate // 아래에 선언된 포인터변수 d로 참조되는 멤버들
 {
 public:
     static const int baseMsBeforeNewRequest = 5 * 1000; // 5 s, increased after each missing answer up to 10x
@@ -155,7 +155,7 @@ public:
     QList<WeatherData*> forecast;
     QQmlListProperty<WeatherData> *fcProp;
     bool ready;
-    bool useGps;
+    bool useGps; 
     QElapsedTimer throttle;
     int nErrors;
     int minMsBeforeNewRequest;
@@ -280,7 +280,7 @@ void AppModel::positionUpdated(QGeoPositionInfo gpsPos)
 }
 //! [3]
 
-void AppModel::queryCity()
+void AppModel::queryCity() //헤더 파일에 선언된 AppModel의 멤버함수 쿼리시티가 여기에 실행코드가 선언되었다.
 {
     //don't update more often then once a minute
     //to keep load on server low
@@ -290,6 +290,7 @@ void AppModel::queryCity()
             d->delayedCityRequestTimer.start();
         return;
     }
+
     qDebug(requestsLog) << "requested query of city";
     d->throttle.start();
     d->minMsBeforeNewRequest = (d->nErrors + 1) * d->baseMsBeforeNewRequest;
@@ -364,7 +365,7 @@ void AppModel::handleGeoNetworkData(QNetworkReply *networkReply)
         QJsonValue jv = jo.value(QStringLiteral("name"));
 
         const QString city = jv.toString();
-        qCDebug(requestsLog) << "got city: " << city;
+        qCDebug(requestsLog) << "got city: " << city; //좌표를 도시로 변환하는 것 같은 의심코드
         if (city != d->city) {
             d->city = city;
             emit cityChanged();
@@ -517,12 +518,12 @@ void AppModel::handleForecastNetworkData(QNetworkReply *networkReply)
 
 bool AppModel::hasValidCity() const
 {
-    return (!(d->city.isEmpty()) && d->city.size() > 1 && d->city != "");
+    return (!(d->city.isEmpty()) && d->city.size() > 1 && d->city != ""); //도시값이 비어있지 않고 도시크기값이 1보다 크고 도시의 스트링값이 비어있지 않으면 참을 리턴 즉 존재함을 보여주는 함수이다.
 }
 
 bool AppModel::hasValidWeather() const
 {
-    return hasValidCity() && (!(d->now.weatherIcon().isEmpty()) &&
+    return hasValidCity() && (!(d->now.weatherIcon().isEmpty()) && //isEmpty 개체가 갖고있는 문자열이 비어 있는지 조사한다.
                               (d->now.weatherIcon().size() > 1) &&
                               d->now.weatherIcon() != "");
 }

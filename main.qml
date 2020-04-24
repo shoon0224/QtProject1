@@ -17,7 +17,7 @@ Window {
     height: 512
 
 
-    /*appmodel.cpp 가*/
+    /*appmodel.cpp */
     AppModel {
         id: model
         onReadyChanged: {
@@ -152,12 +152,19 @@ Window {
                 /* 위도 경도 값을 콘솔창에 소수점 15자리(최대 출력 가능한 소수점)까지 출력 */
                 console.log("위도: "+crd.latitude, "경도: "+crd.longitude)
 
-                console.log()
 
-                console.log(model.city ="seoul")
+
+                /**********************코드 분석용 콘솔출력***********************/
+
+                console.log(model.city ="busan")
+                console.log(model)
                 console.log(model.hasValidWeather ? model.weather.weatherDescription : "no weather data")
+                //appmodel.cpp에 있는 함수에서 리턴값으로 참을 받으면 날씨가 출력된다.
                 console.log(model.hasValidWeather ? model.weather.temperature : "??")
-                console.log(model.hasValidCoord)
+
+                /*************************************************************/
+
+
 
             }
             /*더블 클릭 했을 시 이벤트 핸들러*/

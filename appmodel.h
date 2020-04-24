@@ -160,7 +160,7 @@ public slots:
 
 //! [2]
 private slots:
-    void queryCity();
+    void queryCity(); //쿼리시티 멤버함수는 QObject를 상속 받은 AppModel클래스의 멤버함수이다.
     void networkSessionOpened();
     void positionUpdated(QGeoPositionInfo gpsPos);
     void positionError(QGeoPositionInfoSource::Error e);
