@@ -12,6 +12,7 @@
 
 int main(int argc, char *argv[])
 {
+    qDebug() << "main함수 실생";
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
     /*==============================추가================================*/
@@ -24,8 +25,7 @@ int main(int argc, char *argv[])
     QQuickView view;
     view.setSource(QUrl(mainQmlApp));
     view.setResizeMode(QQuickView::SizeRootObjectToView);
-
-//    QObject::connect(view.engine(), SIGNAL(quit()), qApp, SLOT(quit()));
+    QObject::connect(view.engine(), SIGNAL(quit()), qApp, SLOT(quit()));
 //    view.setGeometry(QRect(100, 100, 360, 640));
 //    view.show(); 화면 두개뜸
     /*=================================================================*/
@@ -39,6 +39,8 @@ int main(int argc, char *argv[])
             QCoreApplication::exit(-1);
     }, Qt::QueuedConnection);
     engine.load(url);
+
+    //main.cpp에서는 main.qml를 로드한다.
 
     return app.exec();
 }

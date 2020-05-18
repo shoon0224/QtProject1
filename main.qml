@@ -11,6 +11,7 @@ import "components"
 // 14a836908caa68e11b37f96d8c06c91d // openweathermap key
 
 Window {
+
     /*윈도우 속성값들*/
     visible: true
     width: 512
@@ -18,7 +19,7 @@ Window {
 
 
     /*appmodel.cpp */
-    AppModel {
+    AppModel { //클래스 이름을 그대로 가져와서 선언한것인가?
         id: model
         onReadyChanged: {
             if (model.ready){
@@ -39,6 +40,7 @@ Window {
 
     Map{
         id:map
+
         /*위도, 경도 좌표 default 값 x,y좌표*/
         property var xLati : 35.0860
         property var yLongi : 129.0711
@@ -55,8 +57,6 @@ Window {
         signal showGeocodeInfo()
         signal geocodeFinished()
         signal coordinatesCaptured(double latitude, double longitude)
-        signal showMainMenu(variant coordinate)
-        signal showPointMenu(variant coordinate)
 
         /*위도, 경도 좌표 입력 시 해당 좌표로 이동*/
         GeocodeModel {
@@ -101,16 +101,10 @@ Window {
             height: 100
             opacity: 0.7
 
-            weatherIcon: (model.hasValidWeather
-                          ? model.weather.weatherIcon
-                          : "01d")
+            weatherIcon: (model.hasValidWeather ? model.weather.weatherIcon : "01d")
             //! [3]
-            topText: (model.hasValidWeather
-                      ? model.weather.temperature
-                      : "??")
-            bottomText: (model.hasValidWeather
-                         ? model.weather.weatherDescription
-                         : "No weather data")
+            topText: (model.hasValidWeather ? model.weather.temperature : "??")
+            bottomText: (model.hasValidWeather ? model.weather.weatherDescription : "No weather data")
             //! [4]
         }
 
@@ -137,7 +131,10 @@ Window {
         MouseArea{
             id:ma //에마우스 공간 id 이름
             anchors.fill: parent // 마우스이벤트 범위을 map에 가득 채움
-
+            /************************************************************************/
+            //시그널
+//            signal Scoordinate(QString getLatitude, QString getLongitude)
+            /************************************************************************/
             /*마우스 버튼 영역에서 반응을 가능하게 하는 속성*/
             acceptedButtons: Qt.LeftButton | Qt.RightButton
 
@@ -152,20 +149,16 @@ Window {
                 /* 위도 경도 값을 콘솔창에 소수점 15자리(최대 출력 가능한 소수점)까지 출력 */
                 console.log("위도: "+crd.latitude, "경도: "+crd.longitude)
 
-
-
                 /**********************코드 분석용 콘솔출력***********************/
 
-                console.log(model.city ="busan")
-                console.log(model)
+                console.log(model.city ="")
                 console.log(model.hasValidWeather ? model.weather.weatherDescription : "no weather data")
                 //appmodel.cpp에 있는 함수에서 리턴값으로 참을 받으면 날씨가 출력된다.
                 console.log(model.hasValidWeather ? model.weather.temperature : "??")
-
                 /*************************************************************/
 
-
-
+                model.sendLatitude(latitudeE.text)
+                model.sendLongitude(longitudeE.text)
             }
             /*더블 클릭 했을 시 이벤트 핸들러*/
             onDoubleClicked:{

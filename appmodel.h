@@ -59,36 +59,25 @@
 #include <QtPositioning/QGeoPositionInfoSource>
 
 //! [0]
-class WeatherData : public QObject { //QObject를 상속 받은 WeatherData 클래스 선언
+class WeatherData : public QObject {
     Q_OBJECT
-    Q_PROPERTY(QString dayOfWeek
-               READ dayOfWeek WRITE setDayOfWeek
-               NOTIFY dataChanged)
-    //QString 타입 설정값 dayOfWeek를 qml로 전달
+    Q_PROPERTY(QString dayOfWeek READ dayOfWeek WRITE setDayOfWeek NOTIFY dataChanged)
+    Q_PROPERTY(QString weatherIcon READ weatherIcon WRITE setWeatherIcon NOTIFY dataChanged)
+    Q_PROPERTY(QString weatherDescription READ weatherDescription WRITE setWeatherDescription NOTIFY dataChanged)
+    Q_PROPERTY(QString temperature READ temperature WRITE setTemperature NOTIFY dataChanged)
     //Q_PROPERTY(type name READ name WRITE setname NOTIFY nameChanged)
     //타입(type)과 읽을 때 함수(READ), 수정 시 함수(WRITE), 변경 시 호출할 시그널(NOTIFY) 작성
-    //public으로 가서 QString dayOfWeek(); 선언
-
-    Q_PROPERTY(QString weatherIcon
-               READ weatherIcon WRITE setWeatherIcon
-               NOTIFY dataChanged)
-    Q_PROPERTY(QString weatherDescription
-               READ weatherDescription WRITE setWeatherDescription
-               NOTIFY dataChanged)
-    Q_PROPERTY(QString temperature
-               READ temperature WRITE setTemperature
-               NOTIFY dataChanged)
 
 public:
     explicit WeatherData(QObject *parent = 0);
     WeatherData(const WeatherData &other);
 
-    QString dayOfWeek() const; //함수 작성
+    QString dayOfWeek() const;
     QString weatherIcon() const;
     QString weatherDescription() const;
     QString temperature() const;
 
-    void setDayOfWeek(const QString &value);//함수작성
+    void setDayOfWeek(const QString &value);
     void setWeatherIcon(const QString &value);
     void setWeatherDescription(const QString &value);
     void setTemperature(const QString &value);
@@ -112,33 +101,18 @@ class AppModelPrivate;
 class AppModel : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(bool ready
-               READ ready
-               NOTIFY readyChanged)
-    Q_PROPERTY(bool hasSource
-               READ hasSource
-               NOTIFY readyChanged)
-    Q_PROPERTY(bool hasValidCity
-               READ hasValidCity
-               NOTIFY cityChanged)
-    Q_PROPERTY(bool hasValidWeather
-               READ hasValidWeather
-               NOTIFY weatherChanged)
-    Q_PROPERTY(bool useGps
-               READ useGps WRITE setUseGps
-               NOTIFY useGpsChanged)
-    Q_PROPERTY(QString city
-               READ city WRITE setCity
-               NOTIFY cityChanged)
-    Q_PROPERTY(WeatherData *weather
-               READ weather
-               NOTIFY weatherChanged)
-    Q_PROPERTY(QQmlListProperty<WeatherData> forecast
-               READ forecast
-               NOTIFY weatherChanged)
+    Q_PROPERTY(bool ready READ ready NOTIFY readyChanged)
+    Q_PROPERTY(bool hasSource READ hasSource NOTIFY readyChanged)
+    Q_PROPERTY(bool hasValidCity READ hasValidCity NOTIFY cityChanged)
+    Q_PROPERTY(bool hasValidWeather READ hasValidWeather NOTIFY weatherChanged)
+    Q_PROPERTY(bool useGps READ useGps WRITE setUseGps NOTIFY useGpsChanged)
+    Q_PROPERTY(QString city READ city WRITE setCity NOTIFY cityChanged)
+    Q_PROPERTY(WeatherData *weather READ weather NOTIFY weatherChanged)
+    Q_PROPERTY(QQmlListProperty<WeatherData> forecast READ forecast NOTIFY weatherChanged)
+
 
 public:
-    explicit AppModel(QObject *parent = 0);
+    explicit AppModel(QObject *pardnt = 0); //explicit 자신이 원하지 않은 형변환이 일어나지 않도록 제한하는 키워드
     ~AppModel();
 
     bool ready() const;
@@ -157,10 +131,12 @@ public:
 
 public slots:
     Q_INVOKABLE void refreshWeather();
+    QString sendLatitude(QString lat);//추가
+    QString sendLongitude(QString lon);//추가
 
 //! [2]
 private slots:
-    void queryCity(); //쿼리시티 멤버함수는 QObject를 상속 받은 AppModel클래스의 멤버함수이다.
+    void queryCity();
     void networkSessionOpened();
     void positionUpdated(QGeoPositionInfo gpsPos);
     void positionError(QGeoPositionInfoSource::Error e);
@@ -168,12 +144,14 @@ private slots:
     void handleWeatherNetworkData(QNetworkReply *networkReply);
     void handleForecastNetworkData(QNetworkReply *networkReply);
 
+
 //! [3]
 signals:
     void readyChanged();
     void useGpsChanged();
     void cityChanged();
     void weatherChanged();
+    void latitudeChanged();
 
 //! [3]
 
