@@ -63,6 +63,7 @@
 #include <QUrlQuery>
 #include <QElapsedTimer>
 #include <QLoggingCategory>
+#include <qgeocoordinate.h>
 
 /*
  *This application uses http://openweathermap.org/api
@@ -144,7 +145,7 @@ void WeatherData::setTemperature(const QString &value)
 class AppModelPrivate // 아래에 선언된 포인터변수 d로 참조되는 멤버들
 {
 public:
-    static const int baseMsBeforeNewRequest = 5 * 1000; // 5 s, increased after each missing answer up to 10x
+    static const int baseMsBeforeNewRequest = 1; // 5 s, increased after each missing answer up to 10x (원래 값은 5 *1000 5초였다 0.001초로 줄임 바로반응위해)
     QGeoPositionInfoSource *src;//위치 소스
     QGeoCoordinate coord; //좌표
     QString longitude, latitude; //경도 위
@@ -181,6 +182,8 @@ public:
         app_ident = QStringLiteral("36496bad1955bf3365448965a42b9eac");
     }
 };
+
+
 
 static void forecastAppend(QQmlListProperty<WeatherData> *prop, WeatherData *val)
 {
@@ -267,10 +270,10 @@ void AppModel::networkSessionOpened()
 //! [2]
 
 //! [3]
-void AppModel::positionUpdated(QGeoPositionInfo gpsPos) //durl gpspos안에 내 현재위치 좌표값이 담겨있다 이 파라미터값을 qml에서 받아온 좌표를 넣으면 될것같다.
+void AppModel::positionUpdated(QGeoPositionInfo) //여기 gpspos안에 내 현재위치 좌표값이 담겨있다 이 파라미터값을 qml에서 받아온 좌표를 넣으면 될것같다.
 {
     qCDebug(requestsLog) << "PositionUpdated함수 실행";
-    d->coord = gpsPos.coordinate();
+//    d->coord = gpsPos.coordinate(); 이 코드를 추석처리하지 않으면 계속 gps값이 덮어 씌워짐
 
     if (!(d->useGps))
         return;
@@ -290,15 +293,17 @@ void AppModel::queryCity()
         qCDebug(requestsLog) << "delaying query of city";
         if (!d->delayedCityRequestTimer.isActive())
             d->delayedCityRequestTimer.start();
-        return;
+        return ;
     }
 
     qDebug(requestsLog) << "requested query of city";
-    d->throttle.start(); //start함수 호출
+    d->throttle.start();
     d->minMsBeforeNewRequest = (d->nErrors + 1) * d->baseMsBeforeNewRequest;
-    QString latitude, longitude; //Qstring 클래스의 객체 latitude, longitude 선언
-    longitude.setNum(d->coord.longitude()); //longitude의 setNum함수가 파라미터 값으로 AppModelPrivate클래스의 coord객체가 longitude()함수를 호출한다??
-    latitude.setNum(d->coord.latitude());//qml상에서 아무래도 여기에 latitude와 longitude값을 넣어야할것같다.
+    QString latitude, longitude;
+    longitude.setNum(d->coord.longitude());
+    latitude.setNum(d->coord.latitude());
+
+
     qDebug(requestsLog) << "latitude출력: " <<latitude ;
     qDebug(requestsLog) << "longitude출력: " <<longitude ;
 
@@ -319,6 +324,7 @@ void AppModel::queryCity()
     // connect up the signal right away
     connect(rep, &QNetworkReply::finished, this, [this, rep]() { handleGeoNetworkData(rep); });
 
+    return ;
 }
 
 void AppModel::positionError(QGeoPositionInfoSource::Error e)
@@ -377,9 +383,9 @@ void AppModel::handleGeoNetworkData(QNetworkReply *networkReply)
             emit cityChanged();
             refreshWeather();
         }
-    } else {
-        hadError(true);
     }
+    hadError(true);// 원래 else로 있었음 그래야 if문 종료하고 다시 도시 검색실행을 하지않음
+
     networkReply->deleteLater();
 }
 
@@ -535,7 +541,7 @@ bool AppModel::hasValidWeather() const
 {
     qCDebug(requestsLog) << "hasValidWeather함수 실행";
     return hasValidCity() && (!(d->now.weatherIcon().isEmpty()) && //isEmpty 개체가 갖고있는 문자열이 비어 있는지 조사한다.
-                              (d->now.weatherIcon().size() > 1) &&
+                             (d->now.weatherIcon().size() > 1) &&
                               d->now.weatherIcon() != "");
 }
 
@@ -596,13 +602,17 @@ void AppModel::setCity(const QString &value)
     refreshWeather();
 }
 
-QString AppModel::sendLatitude(QString lat) //qml에서 경도값을 받아오는 set함수
+double AppModel::sendLatitude(double lat) //qml에서 경도값을 받아오는 set함수
 {
-    qDebug() << lat;
-    return "";
+    qDebug() <<"sendLatitude의 호출값"<< lat;
+    d->coord.setLatitude(lat);
+    qDebug() <<"coord객체의 latitude함수로 들어간 lat값" <<d->coord.latitude();
+    return lat;
 }
-QString AppModel::sendLongitude(QString lon) //qml에서 위도값을 받아오는 set함수
+double AppModel::sendLongitude(double lon) //qml에서 위도값을 받아오는 set함수
 {
-    qDebug() << lon;
-    return "";
+    qDebug() <<"sendLongitude의 호출값"<< lon;
+    d->coord.setLongitude(lon);
+    qDebug() <<"coord객체의 longitude함수로 들어간 lon값" << d->coord.longitude();
+    return lon;
 }

@@ -12,7 +12,7 @@
 
 int main(int argc, char *argv[])
 {
-    qDebug() << "main함수 실생";
+    qDebug() << "main함수 실행";
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
     /*==============================추가================================*/

@@ -131,8 +131,9 @@ public:
 
 public slots:
     Q_INVOKABLE void refreshWeather();
-    QString sendLatitude(QString lat);//추가
-    QString sendLongitude(QString lon);//추가
+    double sendLatitude(double lat);//추가
+    double sendLongitude(double lon);//추가
+
 
 //! [2]
 private slots:

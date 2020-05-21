@@ -8,18 +8,18 @@ import QtQuick.Shapes 1.12 //핀모양 만들기
 import WeatherInfo 1.0
 import "components"
 
-// 14a836908caa68e11b37f96d8c06c91d // openweathermap key
 
 Window {
 
     /*윈도우 속성값들*/
+    id: win
     visible: true
     width: 512
     height: 512
 
 
     /*appmodel.cpp */
-    AppModel { //클래스 이름을 그대로 가져와서 선언한것인가?
+    AppModel {
         id: model
         onReadyChanged: {
             if (model.ready){
@@ -30,6 +30,11 @@ Window {
             }
         }
     }
+
+
+
+
+
 
 
     Plugin{
@@ -76,6 +81,29 @@ Window {
             }
         }
 
+        Canvas {
+            id: mycanvas
+            width: win.width
+            height: win.height
+            visible: (map.zoomLevel >= 10 && map.zoomLevel <= 11 ? true : false)
+            onPaint: {
+                var ctx = getContext("2d")
+
+                // setup the stroke
+                ctx.strokeStyle = "red"
+
+                // create a path
+                ctx.beginPath()
+                ctx.moveTo(0,win.parent/0.33)
+                ctx.lineTo(win.parent/0.33,win.parent/0.33)
+
+
+
+                // stroke path
+                ctx.stroke()
+            }
+        }
+
         MapItemView {
             model: geocodeModel
         }
@@ -99,14 +127,21 @@ Window {
             //아이콘 크기
             width: 100
             height: 100
-            opacity: 0.7
+            opacity: 1
 
-            weatherIcon: (model.hasValidWeather ? model.weather.weatherIcon : "01d")
-            //! [3]
-            topText: (model.hasValidWeather ? model.weather.temperature : "??")
-            bottomText: (model.hasValidWeather ? model.weather.weatherDescription : "No weather data")
-            //! [4]
+            weatherIcon: (model.hasValidWeather ? model.weather.weatherIcon : "01d") //날씨 아이콘
+
+            topText: (model.hasValidWeather ? model.weather.temperature : "??") // 온도
+            bottomText: (model.hasValidWeather ? model.weather.weatherDescription : "No weather data") //날씨상태
+
+            Text {
+                x : 55
+                y : 5
+                text: qsTr(model.city ? model.city : "??")//해당도시출력
+                opacity: 1
+            }
         }
+
 
 
         /*맵 중앙 십자표시*/
@@ -131,12 +166,8 @@ Window {
         MouseArea{
             id:ma //에마우스 공간 id 이름
             anchors.fill: parent // 마우스이벤트 범위을 map에 가득 채움
-            /************************************************************************/
-            //시그널
-//            signal Scoordinate(QString getLatitude, QString getLongitude)
-            /************************************************************************/
             /*마우스 버튼 영역에서 반응을 가능하게 하는 속성*/
-            acceptedButtons: Qt.LeftButton | Qt.RightButton
+            acceptedButtons: Qt.LeftButton | Qt.RightButton1
 
             /* 클릭 했을 시 이벤트 핸들러 */
             onClicked:  {
@@ -150,15 +181,17 @@ Window {
                 console.log("위도: "+crd.latitude, "경도: "+crd.longitude)
 
                 /**********************코드 분석용 콘솔출력***********************/
-
-                console.log(model.city ="")
-                console.log(model.hasValidWeather ? model.weather.weatherDescription : "no weather data")
-                //appmodel.cpp에 있는 함수에서 리턴값으로 참을 받으면 날씨가 출력된다.
-                console.log(model.hasValidWeather ? model.weather.temperature : "??")
+                //                console.log(model.city)
+                //                console.log(model.hasValidWeather ? model.weather.weatherDescription : "no weather data")
+                //                //appmodel.cpp에 있는 함수에서 리턴값으로 참을 받으면 날씨가 출력된다.
+                //                console.log(model.hasValidWeather ? model.weather.temperature : "??")
                 /*************************************************************/
 
+                /*Appmodel의 setL~ 함수들에 qml에서 입력받은 위도경도의 텍스트 값을 Cpp로 전달해준다.*/
                 model.sendLatitude(latitudeE.text)
                 model.sendLongitude(longitudeE.text)
+
+
             }
             /*더블 클릭 했을 시 이벤트 핸들러*/
             onDoubleClicked:{
@@ -253,7 +286,7 @@ Window {
             width:250
             height:130
             /*투명도*/
-            opacity:0.8
+            opacity:(map.zoomLevel >= 10 && map.zoomLevel <= 11 ? 0.1 : 0.9)
             /*테두리*/
             border.width:1
 
@@ -339,6 +372,8 @@ Window {
                     map.center = QtPositioning.coordinate(map.xLati,map.yLongi)
                     latitudeE.text = map.xLati
                     longitudeE.text = map.yLongi
+                    model.sendLatitude(latitudeE.text)
+                    model.sendLongitude(longitudeE.text)
                 }
             }
 
@@ -364,6 +399,8 @@ Window {
                         map.center = QtPositioning.coordinate(latitudeE.text, longitudeE.text)
                         console.log("해당 좌표로 이동합니다.")
                         map.zoomLevel = 15
+                        model.sendLatitude(latitudeE.text)
+                        model.sendLongitude(longitudeE.text)
                     }
                 }
             }
