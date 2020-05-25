@@ -14,8 +14,11 @@ Window {
     /*윈도우 속성값들*/
     id: win
     visible: true
-    width: 512
-    height: 512
+    //화면크기고정
+    minimumWidth: 720
+    minimumHeight: 720
+    maximumWidth: minimumWidth
+    maximumHeight: minimumHeight
 
 
     /*appmodel.cpp */
@@ -81,28 +84,9 @@ Window {
             }
         }
 
-        Canvas {
-            id: mycanvas
-            width: win.width
-            height: win.height
-            visible: (map.zoomLevel >= 10 && map.zoomLevel <= 11 ? true : false)
-            onPaint: {
-                var ctx = getContext("2d")
-
-                // setup the stroke
-                ctx.strokeStyle = "red"
-
-                // create a path
-                ctx.beginPath()
-                ctx.moveTo(0,win.parent/0.33)
-                ctx.lineTo(win.parent/0.33,win.parent/0.33)
 
 
 
-                // stroke path
-                ctx.stroke()
-            }
-        }
 
         MapItemView {
             model: geocodeModel
@@ -120,11 +104,131 @@ Window {
 
         /*날씨 표시 구역*/
         BigForecastIcon {
-            id: current
+            id:solo
             x:5
             y:150
-
+            visible: (map.zoomLevel >= 10 && map.zoomLevel <= 11 ? false : true)
             //아이콘 크기
+            width: 100
+            height: 100
+            opacity: 1
+
+            weatherIcon: (model.hasValidWeather ? model.weather.weatherIcon : "01d")//날씨 아이콘
+            topText: (model.hasValidWeather ? model.weather.temperature : "??") // 온도
+            bottomText: (model.hasValidWeather ? model.weather.weatherDescription : "No weather data") //날씨상태
+
+            Text {
+                x : 55
+                y : 5
+                text: qsTr(model.city ? model.city : "??")//해당도시출력
+                opacity: 1
+
+            }
+
+        }
+
+
+
+        Button{
+            id:weatherC
+            visible: (map.zoomLevel >= 10 && map.zoomLevel <= 11 ? true : false)
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+            text:"도시새로고침"
+            /* 클릭 했을 시 이벤트 핸들러 */
+
+            onClicked:  {
+                /* 마우스 포인터 지점의 x, y 값의 위도경도 좌표값을 crd 변수에 대입 */
+                var crd1 = map.toCoordinate(Qt.point(120, 120))
+                var crd2 = map.toCoordinate(Qt.point(360, 120))
+                var crd3 = map.toCoordinate(Qt.point(600, 120))
+                var crd4 = map.toCoordinate(Qt.point(120, 360))
+                var crd5 = map.toCoordinate(Qt.point(360, 360))
+                var crd6 = map.toCoordinate(Qt.point(600, 360))
+                var crd7 = map.toCoordinate(Qt.point(120, 600))
+                var crd8 = map.toCoordinate(Qt.point(360, 600))
+                var crd9 = map.toCoordinate(Qt.point(600, 600))
+
+                /*Appmodel의 setL~ 함수들에 qml에서 입력받은 위도경도의 텍스트 값을 Cpp로 전달해준다.*/
+
+                console.log("crd1 :" + crd1)
+                console.log("crd2 :" + crd2)
+                console.log("crd3 :" + crd3)
+                console.log("crd4 :" + crd4)
+                console.log("crd5 :" + crd5)
+                console.log("crd6 :" + crd6)
+                console.log("crd7 :" + crd7)
+                console.log("crd8 :" + crd8)
+                console.log("crd9 :" + crd9)
+
+                model.sendLatitude(crd1.latitude)
+                model.sendLongitude(crd1.longitude)
+
+                model.sendLatitude(crd2.latitude)
+                model.sendLongitude(crd2.longitude)
+
+                model.sendLatitude(crd3.latitude)
+                model.sendLongitude(crd3.longitude)
+                model.sendLatitude(crd4.latitude)
+                model.sendLongitude(crd4.longitude)
+                model.sendLatitude(crd5.latitude)
+                model.sendLongitude(crd5.longitude)
+                model.sendLatitude(crd6.latitude)
+                model.sendLongitude(crd6.longitude)
+                model.sendLatitude(crd7.latitude)
+                model.sendLongitude(crd7.longitude)
+                model.sendLatitude(crd8.latitude)
+                model.sendLongitude(crd8.longitude)
+                model.sendLatitude(crd9.latitude)
+                model.sendLongitude(crd9.longitude)
+
+                here1.text = crd1.latitude + "\n" + crd1.longitude
+                here2.text = crd2.latitude + "\n" + crd2.longitude
+                here3.text = crd3.latitude + "\n" + crd3.longitude
+                here4.text = crd4.latitude + "\n" + crd4.longitude
+                here5.text = crd5.latitude + "\n" + crd5.longitude
+                here6.text = crd6.latitude + "\n" + crd6.longitude
+                here7.text = crd7.latitude + "\n" + crd7.longitude
+                here8.text = crd8.latitude + "\n" + crd8.longitude
+                here9.text = crd9.latitude + "\n" + crd9.longitude
+
+            }
+        }
+
+
+
+        BigForecastIcon {
+            id:weather1
+            x:70
+            y:70
+            visible: (map.zoomLevel >= 10 && map.zoomLevel <= 11 ? true : false)
+            width: 100
+            height: 100
+            opacity: 14
+            weatherIcon: (model.hasValidWeather ? model.weather.weatherIcon : "01d") //날씨 아이콘
+            topText: (model.hasValidWeather ? model.weather.temperature : "??") // 온도
+            bottomText: (model.hasValidWeather ? model.weather.weatherDescription : "No weather data") //날씨상태
+
+            Text {
+                x : 55
+                y : 5
+                text: qsTr(model.city ? model.city : "??")//해당도시출력
+                opacity: 1
+            }
+            Text{
+                id:here1
+                x:0
+                y:100
+                font.pointSize: 8
+                text:""
+            }
+
+        }
+        BigForecastIcon {
+            id:weather2
+            x:310
+            y:70
+            visible: (map.zoomLevel >= 10 && map.zoomLevel <= 11 ? true : false)
             width: 100
             height: 100
             opacity: 1
@@ -140,7 +244,211 @@ Window {
                 text: qsTr(model.city ? model.city : "??")//해당도시출력
                 opacity: 1
             }
+            Text{
+                id:here2
+                x:0
+                y:100
+                font.pointSize: 8
+                text:""
+            }
         }
+        BigForecastIcon {
+            id:weather3
+            x:550
+            y:70
+            visible: (map.zoomLevel >= 10 && map.zoomLevel <= 11 ? true : false)
+            width: 100
+            height: 100
+            opacity: 1
+
+            weatherIcon: (model.hasValidWeather ? model.weather.weatherIcon : "01d") //날씨 아이콘
+
+            topText: (model.hasValidWeather ? model.weather.temperature : "??") // 온도
+            bottomText: (model.hasValidWeather ? model.weather.weatherDescription : "No weather data") //날씨상태
+
+            Text {
+                x : 55
+                y : 5
+                text: qsTr(model.city ? model.city : "??")//해당도시출력
+                opacity: 1
+            }
+            Text{
+                id:here3
+                x:0
+                y:100
+                font.pointSize: 8
+                text:""
+            }
+        }
+        BigForecastIcon {
+            id:weather4
+            x:70
+            y:310
+            visible: (map.zoomLevel >= 10 && map.zoomLevel <= 11 ? true : false)
+            width: 100
+            height: 100
+            opacity: 1
+
+            weatherIcon: (model.hasValidWeather ? model.weather.weatherIcon : "01d") //날씨 아이콘
+
+            topText: (model.hasValidWeather ? model.weather.temperature : "??") // 온도
+            bottomText: (model.hasValidWeather ? model.weather.weatherDescription : "No weather data") //날씨상태
+
+            Text {
+                x : 55
+                y : 5
+                text: qsTr(model.city ? model.city : "??")//해당도시출력
+                opacity: 1
+            }
+            Text{
+                id:here4
+                x:0
+                y:100
+                font.pointSize: 8
+                text:""
+            }
+        }
+        BigForecastIcon {
+            id:weather5
+            x:310
+            y:310
+            visible: (map.zoomLevel >= 10 && map.zoomLevel <= 11 ? true : false)
+            width: 100
+            height: 100
+            opacity: 1
+
+            weatherIcon: (model.hasValidWeather ? model.weather.weatherIcon : "01d") //날씨 아이콘
+
+            topText: (model.hasValidWeather ? model.weather.temperature : "??") // 온도
+            bottomText: (model.hasValidWeather ? model.weather.weatherDescription : "No weather data") //날씨상태
+
+            Text {
+                x : 55
+                y : 5
+                text: qsTr(model.city ? model.city : "??")//해당도시출력
+                opacity: 1
+            }
+            Text{
+                id:here5
+                x:0
+                y:100
+                font.pointSize: 8
+                text:""
+            }
+        }
+        BigForecastIcon {
+            id:weather6
+            x:550
+            y:310
+            visible: (map.zoomLevel >= 10 && map.zoomLevel <= 11 ? true : false)
+            width: 100
+            height: 100
+            opacity: 1
+
+            weatherIcon: (model.hasValidWeather ? model.weather.weatherIcon : "01d") //날씨 아이콘
+
+            topText: (model.hasValidWeather ? model.weather.temperature : "??") // 온도
+            bottomText: (model.hasValidWeather ? model.weather.weatherDescription : "No weather data") //날씨상태
+
+            Text {
+                x : 55
+                y : 5
+                text: qsTr(model.city ? model.city : "??")//해당도시출력
+                opacity: 1
+            }
+            Text{
+                id:here6
+                x:0
+                y:100
+                font.pointSize: 8
+                text:""
+            }
+        }
+        BigForecastIcon {
+            id:weather7
+            x:70
+            y:550
+            visible: (map.zoomLevel >= 10 && map.zoomLevel <= 11 ? true : false)
+            width: 100
+            height: 100
+            opacity: 1
+
+            weatherIcon: (model.hasValidWeather ? model.weather.weatherIcon : "01d") //날씨 아이콘
+
+            topText: (model.hasValidWeather ? model.weather.temperature : "??") // 온도
+            bottomText: (model.hasValidWeather ? model.weather.weatherDescription : "No weather data") //날씨상태
+
+            Text {
+                x : 55
+                y : 5
+                text: qsTr(model.city ? model.city : "??")//해당도시출력
+                opacity: 1
+            }
+            Text{
+                id:here7
+                x:0
+                y:100
+                font.pointSize: 8
+                text:""
+            }
+        }
+        BigForecastIcon {
+            id:weather8
+            x:310
+            y:550
+            visible: (map.zoomLevel >= 10 && map.zoomLevel <= 11 ? true : false)
+            width: 100
+            height: 100
+            opacity: 1
+
+            weatherIcon: (model.hasValidWeather ? model.weather.weatherIcon : "01d") //날씨 아이콘
+
+            topText: (model.hasValidWeather ? model.weather.temperature : "??") // 온도
+            bottomText: (model.hasValidWeather ? model.weather.weatherDescription : "No weather data") //날씨상태
+
+            Text {
+                x : 55
+                y : 5
+                text: qsTr(model.city ? model.city : "??")//해당도시출력
+                opacity: 1
+            }
+            Text{
+                id:here8
+                x:0
+                y:100
+                font.pointSize: 8
+                text:""
+            }
+        }
+        BigForecastIcon {
+            id:weather9
+            x:550
+            y:550
+            visible: (map.zoomLevel >= 10 && map.zoomLevel <= 11 ? true : false)
+            width: 100
+            height: 100
+            opacity: 1
+
+            weatherIcon: (model.hasValidWeather ? model.weather.weatherIcon : "01d") //날씨 아이콘
+
+            topText: (model.hasValidWeather ? model.weather.temperature : "??") // 온도
+            bottomText: (model.hasValidWeather ? model.weather.weatherDescription : "No weather data") //날씨상태
+
+            Text {
+                x : 55
+                y : 5
+                text: qsTr(model.city ? model.city : "??")//해당도시출력
+                opacity: 1
+            }
+            Text{
+                id:here9
+                x:0
+                y:100
+                font.pointSize: 8
+                text:""
+            }
+        }
+
 
 
 
@@ -168,11 +476,14 @@ Window {
             anchors.fill: parent // 마우스이벤트 범위을 map에 가득 채움
             /*마우스 버튼 영역에서 반응을 가능하게 하는 속성*/
             acceptedButtons: Qt.LeftButton | Qt.RightButton1
+            enabled: (map.zoomLevel > 11 || map.zoomLevel < 10 ? true : false) // 이 예외처리를 안해주면 위에 버튼클릭이 안됨
 
             /* 클릭 했을 시 이벤트 핸들러 */
             onClicked:  {
                 /* 마우스 포인터 지점의 x, y 값의 위도경도 좌표값을 crd 변수에 대입 */
                 var crd = map.toCoordinate(Qt.point(mouseX, mouseY))
+
+
                 /* 아래에 있는 textEdit의 text값에 위 좌표값의 각각 경도와 위도값을 toFixed(4)를 이용하여*/
                 /* 소수점 4자리 까지 출력 */
                 latitudeE.text = (crd.latitude).toFixed(4)
@@ -180,17 +491,11 @@ Window {
                 /* 위도 경도 값을 콘솔창에 소수점 15자리(최대 출력 가능한 소수점)까지 출력 */
                 console.log("위도: "+crd.latitude, "경도: "+crd.longitude)
 
-                /**********************코드 분석용 콘솔출력***********************/
-                //                console.log(model.city)
-                //                console.log(model.hasValidWeather ? model.weather.weatherDescription : "no weather data")
-                //                //appmodel.cpp에 있는 함수에서 리턴값으로 참을 받으면 날씨가 출력된다.
-                //                console.log(model.hasValidWeather ? model.weather.temperature : "??")
-                /*************************************************************/
-
                 /*Appmodel의 setL~ 함수들에 qml에서 입력받은 위도경도의 텍스트 값을 Cpp로 전달해준다.*/
-                model.sendLatitude(latitudeE.text)
-                model.sendLongitude(longitudeE.text)
-
+                if(map.zoomLevel > 11 || map.zoomLevel < 10){
+                    model.sendLatitude(latitudeE.text)
+                    model.sendLongitude(longitudeE.text)
+                }
 
             }
             /*더블 클릭 했을 시 이벤트 핸들러*/
@@ -286,7 +591,8 @@ Window {
             width:250
             height:130
             /*투명도*/
-            opacity:(map.zoomLevel >= 10 && map.zoomLevel <= 11 ? 0.1 : 0.9)
+            visible:(map.zoomLevel >= 10 && map.zoomLevel <= 11 ? false : true)
+            opacity: 0.9
             /*테두리*/
             border.width:1
 
@@ -441,3 +747,4 @@ Window {
         }
     }
 }
+

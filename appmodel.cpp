@@ -1,4 +1,4 @@
-  /****************************************************************************
+/****************************************************************************
 **
 ** Copyright (C) 2017 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
@@ -74,17 +74,17 @@
 Q_LOGGING_CATEGORY(requestsLog,"wapp.requests")
 
 WeatherData::WeatherData(QObject *parent) :
-        QObject(parent)
+    QObject(parent)
 {
     qDebug(requestsLog) << "WeatherData 함수 실행";
 }
 
 WeatherData::WeatherData(const WeatherData &other) :
-        QObject(0),
-        m_dayOfWeek(other.m_dayOfWeek),
-        m_weather(other.m_weather),
-        m_weatherDescription(other.m_weatherDescription),
-        m_temperature(other.m_temperature)
+    QObject(0),
+    m_dayOfWeek(other.m_dayOfWeek),
+    m_weather(other.m_weather),
+    m_weatherDescription(other.m_weatherDescription),
+    m_temperature(other.m_temperature)
 {
 }
 
@@ -156,23 +156,24 @@ public:
     QList<WeatherData*> forecast; //예보
     QQmlListProperty<WeatherData> *fcProp;//예보속성
     bool ready;
-    bool useGps; 
+    bool useGps;
     QElapsedTimer throttle; // 경과한시간
     int nErrors;
     int minMsBeforeNewRequest;
     QTimer delayedCityRequestTimer;
     QTimer requestNewWeatherTimer;
     QString app_ident;
+    QString crd[9];
 
     AppModelPrivate() :
-            src(NULL),
-            nam(NULL),
-            ns(NULL),
-            fcProp(NULL),
-            ready(false),
-            useGps(true),
-            nErrors(0),
-            minMsBeforeNewRequest(baseMsBeforeNewRequest)
+        src(NULL),
+        nam(NULL),
+        ns(NULL),
+        fcProp(NULL),
+        ready(false),
+        useGps(true),
+        nErrors(0),
+        minMsBeforeNewRequest(baseMsBeforeNewRequest)
     {
         delayedCityRequestTimer.setSingleShot(true);
         delayedCityRequestTimer.setInterval(1000); // 1 s
@@ -213,19 +214,19 @@ static void forecastClear(QQmlListProperty<WeatherData> *prop)
 AppModel::AppModel(QObject *parent) : QObject(parent), d(new AppModelPrivate)
 {
     qDebug(requestsLog) << "appmodel 함수 실행";
-//! [0]
+    //! [0]
     d->fcProp = new QQmlListProperty<WeatherData>(this, d,
-                                                          forecastAppend,
-                                                          forecastCount,
-                                                          forecastAt,
-                                                          forecastClear);
+                                                  forecastAppend,
+                                                  forecastCount,
+                                                  forecastAt,
+                                                  forecastClear);
 
     connect(&d->delayedCityRequestTimer, SIGNAL(timeout()), this, SLOT(queryCity()));//timeout은 QTimer class에 시그널로 선언되어있다.
     connect(&d->requestNewWeatherTimer, SIGNAL(timeout()), this, SLOT(refreshWeather()));
     d->requestNewWeatherTimer.start();
 
 
-//! [1]
+    //! [1]
     // make sure we have an active network session
     d->nam = new QNetworkAccessManager(this);
 
@@ -273,7 +274,7 @@ void AppModel::networkSessionOpened()
 void AppModel::positionUpdated(QGeoPositionInfo) //여기 gpspos안에 내 현재위치 좌표값이 담겨있다 이 파라미터값을 qml에서 받아온 좌표를 넣으면 될것같다.
 {
     qCDebug(requestsLog) << "PositionUpdated함수 실행";
-//    d->coord = gpsPos.coordinate(); 이 코드를 추석처리하지 않으면 계속 gps값이 덮어 씌워짐
+    //    d->coord = gpsPos.coordinate(); 이 코드를 주석처리하지 않으면 계속 gps값이 덮어 씌워짐
 
     if (!(d->useGps))
         return;
@@ -311,6 +312,7 @@ void AppModel::queryCity()
     /* 함수가 클래스 멤버인 경우에만 const 키워드를 함수 뒤에 삽입 할 수 있으며 해당 함수가 속한 객체의 멤버 변수를 변경 할 수 없다는 뜻이다.*/
     /* 또한 const가 붙은 함수 내에서는 const가 붙은 다른 함수를 제외한 일반 함수는 호출하지 못한다.*/
 
+
     QUrl url("http://api.openweathermap.org/data/2.5/weather?");
     QUrlQuery query;
     query.addQueryItem("lat", latitude); // key="lat", value=latitude --> 이값이 위에서 넣은 latitude
@@ -323,7 +325,6 @@ void AppModel::queryCity()
     QNetworkReply *rep = d->nam->get(QNetworkRequest(url));
     // connect up the signal right away
     connect(rep, &QNetworkReply::finished, this, [this, rep]() { handleGeoNetworkData(rep); });
-
     return ;
 }
 
@@ -349,8 +350,6 @@ void AppModel::hadError(bool tryAgain)
     qCDebug(requestsLog) << "hadError함수 실행";
     qCDebug(requestsLog) << "hadError, will " << (tryAgain ? "" : "not ") << "rety";
     d->throttle.start();
-    if (d->nErrors < 10)
-        ++d->nErrors;
     d->minMsBeforeNewRequest = (d->nErrors + 1) * d->baseMsBeforeNewRequest;
     if (tryAgain)
         d->delayedCityRequestTimer.start();
@@ -363,6 +362,7 @@ void AppModel::handleGeoNetworkData(QNetworkReply *networkReply)
         hadError(false); // should retry?
         return;
     }
+
     if (!networkReply->error()) {
         d->nErrors = 0;
         if (!d->throttle.isValid()) // isValid 데이터가 유효하지 않은 경우 0, 그렇지 않은경우 1을 반환한다.
@@ -384,12 +384,12 @@ void AppModel::handleGeoNetworkData(QNetworkReply *networkReply)
             refreshWeather();
         }
     }
-    hadError(true);// 원래 else로 있었음 그래야 if문 종료하고 다시 도시 검색실행을 하지않음
 
+    hadError(true);// 원래 else로 있었음 그래야 if문 종료하고 다시 도시 검색실행을 하지않음
     networkReply->deleteLater();
 }
 
-void AppModel::refreshWeather()
+void AppModel::refreshWeather()//도시값을 받아서 날씨를 데이터를 가져오는 함수
 {
     qCDebug(requestsLog) << "refreshWeather함수 실행";
     if (d->city.isEmpty()) { //isEmpty의 트루폴스 여부는 어떻게 아는가?
@@ -416,7 +416,7 @@ static QString niceTemperatureString(double t)
     return QString::number(qRound(t-ZERO_KELVIN)) + QChar(0xB0);
 }
 
-void AppModel::handleWeatherNetworkData(QNetworkReply *networkReply)
+void AppModel::handleWeatherNetworkData(QNetworkReply *networkReply) //함수
 {
     qCDebug(requestsLog) << "handleWeatherNetworkData함수 실행";
     qCDebug(requestsLog) << "got weather network data";
@@ -434,7 +434,6 @@ void AppModel::handleWeatherNetworkData(QNetworkReply *networkReply)
             QJsonObject obj = document.object();
             QJsonObject tempObject;
             QJsonValue val;
-
             if (obj.contains(QStringLiteral("weather"))) {
                 val = obj.value(QStringLiteral("weather"));
                 QJsonArray weatherArray = val.toArray();
@@ -472,7 +471,7 @@ void AppModel::handleWeatherNetworkData(QNetworkReply *networkReply)
 void AppModel::handleForecastNetworkData(QNetworkReply *networkReply)
 {
     qCDebug(requestsLog) << "handleForecasetNetworkData함수 실행";
-//    qCDebug(requestsLog) << "got forecast";
+    //    qCDebug(requestsLog) << "got forecast";
     if (!networkReply)
         return;
 
@@ -541,7 +540,7 @@ bool AppModel::hasValidWeather() const
 {
     qCDebug(requestsLog) << "hasValidWeather함수 실행";
     return hasValidCity() && (!(d->now.weatherIcon().isEmpty()) && //isEmpty 개체가 갖고있는 문자열이 비어 있는지 조사한다.
-                             (d->now.weatherIcon().size() > 1) &&
+                              (d->now.weatherIcon().size() > 1) &&
                               d->now.weatherIcon() != "");
 }
 
@@ -576,7 +575,7 @@ bool AppModel::useGps() const
 
 void AppModel::setUseGps(bool value)
 {
-   qCDebug(requestsLog) << "setUseGps함수 실행";
+    qCDebug(requestsLog) << "setUseGps함수 실행";
     d->useGps = value;
     if (value) {
         d->city = "";
