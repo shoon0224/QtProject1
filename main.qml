@@ -61,10 +61,40 @@ Window {
         /*디버깅시 지도확대 정도 값*/
         zoomLevel: 16
 
+        onZoomLevelChanged: {
+            model.sendZoomLevel(zoomLevel)
+            if(map.zoomLevel < 10 || map.zoomLevel > 11){ //버튼 다시생성해도 줌밖에선 생기는 문제
+                weatherA.visible = false
+                weatherB.visible = false
+                weatherC.visible = false
+                weatherD.visible = false
+                weatherE.visible = false
+                weatherF.visible = false
+                weatherG.visible = false
+                weatherH.visible = false
+                weatherI.visible = false
+            }
+            else if(map.zoomLevel>=10 || map.zoomLevel <= 11){//또 위에서 꺼놓으니 사라지는 문제 해결
+                weatherA.visible = true
+                weatherB.visible = true
+                weatherC.visible = true
+                weatherD.visible = true
+                weatherE.visible = true
+                weatherF.visible = true
+                weatherG.visible = true
+                weatherH.visible = true
+                weatherI.visible = true
+            }
+
+
+        }
+
+
         property alias geocodeModel: geocodeModel
         signal showGeocodeInfo()
         signal geocodeFinished()
         signal coordinatesCaptured(double latitude, double longitude)
+
 
         /*위도, 경도 좌표 입력 시 해당 좌표로 이동*/
         GeocodeModel {
@@ -88,9 +118,13 @@ Window {
 
 
 
+
+
         MapItemView {
             model: geocodeModel
+
         }
+
 
         Text {
             anchors.right: parent.right
@@ -125,76 +159,248 @@ Window {
 
             }
 
+
+
+        }
+        Button{
+            id:visibleBut
+
+            anchors.right: (weatherA.visible ? weatherA.left : parent.right )
+            visible: (map.zoomLevel >= 10 && map.zoomLevel <= 11 ? true : false)
+            anchors.bottom: parent.bottom
+            text:"좌표변경"
+            onClicked: {
+
+                weatherA.visible = true
+                weatherB.visible = true
+                weatherC.visible = true
+                weatherD.visible = true
+                weatherE.visible = true
+                weatherF.visible = true
+                weatherG.visible = true
+                weatherH.visible = true
+                weatherI.visible = true
+
+//                weather1.weatherIcon = "01d"
+//                weather2.weatherIcon = "01d"
+//                weather3.weatherIcon = "01d"
+//                weather4.weatherIcon = "01d"
+//                weather5.weatherIcon = "01d"
+//                weather6.weatherIcon = "01d"
+//                weather7.weatherIcon = "01d"
+//                weather8.weatherIcon = "01d"
+//                weather9.weatherIcon = "01d"
+
+//                weather1.topText = "??"
+//                weather2.topText = "??"
+//                weather3.topText = "??"
+//                weather4.topText = "??"
+//                weather5.topText = "??"
+//                weather6.topText = "??"
+//                weather7.topText = "??"
+//                weather8.topText = "??"
+//                weather9.topText = "??"
+
+//                weather1.bottomText = "No weather data"
+//                weather2.bottomText = "No weather data"
+//                weather3.bottomText = "No weather data"
+//                weather4.bottomText = "No weather data"
+//                weather5.bottomText = "No weather data"
+//                weather6.bottomText = "No weather data"
+//                weather7.bottomText = "No weather data"
+//                weather8.bottomText = "No weather data"
+//                weather9.bottomText = "No weather data"
+
+//                cityN1.text = "??"
+//                cityN2.text = "??"
+//                cityN3.text = "??"
+//                cityN4.text = "??"
+//                cityN5.text = "??"
+//                cityN6.text = "??"
+//                cityN7.text = "??"
+//                cityN8.text = "??"
+//                cityN9.text = "??"
+
+
+
+                model.myQmlSlot()
+
+
+
+            }
         }
 
-
-
         Button{
-            id:weatherC
+            id:weatherA
             visible: (map.zoomLevel >= 10 && map.zoomLevel <= 11 ? true : false)
             anchors.right: parent.right
             anchors.bottom: parent.bottom
-            text:"도시새로고침"
+            text:"1도시새로고침"
             /* 클릭 했을 시 이벤트 핸들러 */
 
             onClicked:  {
                 /* 마우스 포인터 지점의 x, y 값의 위도경도 좌표값을 crd 변수에 대입 */
                 var crd1 = map.toCoordinate(Qt.point(120, 120))
-                var crd2 = map.toCoordinate(Qt.point(360, 120))
-                var crd3 = map.toCoordinate(Qt.point(600, 120))
-                var crd4 = map.toCoordinate(Qt.point(120, 360))
-                var crd5 = map.toCoordinate(Qt.point(360, 360))
-                var crd6 = map.toCoordinate(Qt.point(600, 360))
-                var crd7 = map.toCoordinate(Qt.point(120, 600))
-                var crd8 = map.toCoordinate(Qt.point(360, 600))
-                var crd9 = map.toCoordinate(Qt.point(600, 600))
-
-                /*Appmodel의 setL~ 함수들에 qml에서 입력받은 위도경도의 텍스트 값을 Cpp로 전달해준다.*/
-
                 console.log("crd1 :" + crd1)
-                console.log("crd2 :" + crd2)
-                console.log("crd3 :" + crd3)
-                console.log("crd4 :" + crd4)
-                console.log("crd5 :" + crd5)
-                console.log("crd6 :" + crd6)
-                console.log("crd7 :" + crd7)
-                console.log("crd8 :" + crd8)
-                console.log("crd9 :" + crd9)
-
-                model.sendLatitude(crd1.latitude)
-                model.sendLongitude(crd1.longitude)
-
-                model.sendLatitude(crd2.latitude)
-                model.sendLongitude(crd2.longitude)
-
-                model.sendLatitude(crd3.latitude)
-                model.sendLongitude(crd3.longitude)
-                model.sendLatitude(crd4.latitude)
-                model.sendLongitude(crd4.longitude)
-                model.sendLatitude(crd5.latitude)
-                model.sendLongitude(crd5.longitude)
-                model.sendLatitude(crd6.latitude)
-                model.sendLongitude(crd6.longitude)
-                model.sendLatitude(crd7.latitude)
-                model.sendLongitude(crd7.longitude)
-                model.sendLatitude(crd8.latitude)
-                model.sendLongitude(crd8.longitude)
-                model.sendLatitude(crd9.latitude)
-                model.sendLongitude(crd9.longitude)
-
+                model.sendLatitude1(crd1.latitude)
+                model.sendLongitude1(crd1.longitude)
                 here1.text = crd1.latitude + "\n" + crd1.longitude
-                here2.text = crd2.latitude + "\n" + crd2.longitude
-                here3.text = crd3.latitude + "\n" + crd3.longitude
-                here4.text = crd4.latitude + "\n" + crd4.longitude
-                here5.text = crd5.latitude + "\n" + crd5.longitude
-                here6.text = crd6.latitude + "\n" + crd6.longitude
-                here7.text = crd7.latitude + "\n" + crd7.longitude
-                here8.text = crd8.latitude + "\n" + crd8.longitude
-                here9.text = crd9.latitude + "\n" + crd9.longitude
-
+                model.myQmlSlot()
+                weatherA.visible = false
             }
         }
+        Button{
+            id:weatherB
+            visible: (map.zoomLevel >= 10 && map.zoomLevel <= 11 ? true : false)
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+            text:"2도시새로고침"
+            /* 클릭 했을 시 이벤트 핸들러 */
 
+            onClicked:  {
+                /* 마우스 포인터 지점의 x, y 값의 위도경도 좌표값을 crd 변수에 대입 */
+                var crd2 = map.toCoordinate(Qt.point(360, 120))
+                console.log("crd2 :" + crd2)
+                model.sendLatitude2(crd2.latitude)
+                model.sendLongitude2(crd2.longitude)
+                here2.text = crd2.latitude + "\n" + crd2.longitude
+                model.myQmlSlot()
+                weatherB.visible = false
+            }
+        }
+        Button{
+            id:weatherC
+            visible: (map.zoomLevel >= 10 && map.zoomLevel <= 11 ? true : false)
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+            text:"3도시새로고침"
+            /* 클릭 했을 시 이벤트 핸들러 */
+
+            onClicked:  {
+                /* 마우스 포인터 지점의 x, y 값의 위도경도 좌표값을 crd 변수에 대입 */
+                var crd3 = map.toCoordinate(Qt.point(600, 120))
+                console.log("crd3 :" + crd3)
+                model.sendLatitude3(crd3.latitude)
+                model.sendLongitude3(crd3.longitude)
+                here3.text = crd3.latitude + "\n" + crd3.longitude
+                model.myQmlSlot()
+                weatherC.visible = false
+            }
+        }
+        Button{
+            id:weatherD
+            visible: (map.zoomLevel >= 10 && map.zoomLevel <= 11 ? true : false)
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+            text:"4도시새로고침"
+            /* 클릭 했을 시 이벤트 핸들러 */
+
+            onClicked:  {
+                /* 마우스 포인터 지점의 x, y 값의 위도경도 좌표값을 crd 변수에 대입 */
+                var crd4 = map.toCoordinate(Qt.point(120, 360))
+                console.log("crd4 :" + crd4)
+                model.sendLatitude4(crd4.latitude)
+                model.sendLongitude4(crd4.longitude)
+                here4.text = crd4.latitude + "\n" + crd4.longitude
+                model.myQmlSlot()
+                weatherD.visible = false
+            }
+        }
+        Button{
+            id:weatherE
+            visible: (map.zoomLevel >= 10 && map.zoomLevel <= 11 ? true : false)
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+            text:"5도시새로고침"
+            /* 클릭 했을 시 이벤트 핸들러 */
+
+            onClicked:  {
+                /* 마우스 포인터 지점의 x, y 값의 위도경도 좌표값을 crd 변수에 대입 */
+                var crd5 = map.toCoordinate(Qt.point(360, 360))
+                console.log("crd5 :" + crd5)
+                model.sendLatitude5(crd5.latitude)
+                model.sendLongitude5(crd5.longitude)
+                here5.text = crd5.latitude + "\n" + crd5.longitude
+                model.myQmlSlot()
+                weatherE.visible = false
+            }
+        }
+        Button{
+            id:weatherF
+            visible: (map.zoomLevel >= 10 && map.zoomLevel <= 11 ? true : false)
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+            text:"6도시새로고침"
+            /* 클릭 했을 시 이벤트 핸들러 */
+
+            onClicked:  {
+                /* 마우스 포인터 지점의 x, y 값의 위도경도 좌표값을 crd 변수에 대입 */
+                var crd6 = map.toCoordinate(Qt.point(600, 360))
+                console.log("crd6 :" + crd6)
+                model.sendLatitude6(crd6.latitude)
+                model.sendLongitude6(crd6.longitude)
+                here6.text = crd6.latitude + "\n" + crd6.longitude
+                model.myQmlSlot()
+                weatherF.visible = false
+            }
+        }
+        Button{
+            id:weatherG
+            visible: (map.zoomLevel >= 10 && map.zoomLevel <= 11 ? true : false)
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+            text:"7도시새로고침"
+            /* 클릭 했을 시 이벤트 핸들러 */
+
+            onClicked:  {
+                /* 마우스 포인터 지점의 x, y 값의 위도경도 좌표값을 crd 변수에 대입 */
+                var crd7 = map.toCoordinate(Qt.point(120, 600))
+                console.log("crd7 :" + crd7)
+                model.sendLatitude7(crd7.latitude)
+                model.sendLongitude7(crd7.longitude)
+                here7.text = crd7.latitude + "\n" + crd7.longitude
+                model.myQmlSlot()
+                weatherG.visible = false
+            }
+        }
+        Button{
+            id:weatherH
+            visible: (map.zoomLevel >= 10 && map.zoomLevel <= 11 ? true : false)
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+            text:"8도시새로고침"
+            /* 클릭 했을 시 이벤트 핸들러 */
+
+            onClicked:  {
+                /* 마우스 포인터 지점의 x, y 값의 위도경도 좌표값을 crd 변수에 대입 */
+                var crd8 = map.toCoordinate(Qt.point(360, 600))
+                console.log("crd8 :" + crd8)
+                model.sendLatitude8(crd8.latitude)
+                model.sendLongitude8(crd8.longitude)
+                here8.text = crd8.latitude + "\n" + crd8.longitude
+                model.myQmlSlot()
+                weatherH.visible = false
+            }
+        }
+        Button{
+            id:weatherI
+            visible: (map.zoomLevel >= 10 && map.zoomLevel <= 11 ? true : false)
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+            text:"9도시새로고침"
+            /* 클릭 했을 시 이벤트 핸들러 */
+
+            onClicked:  {
+                /* 마우스 포인터 지점의 x, y 값의 위도경도 좌표값을 crd 변수에 대입 */
+                var crd9 = map.toCoordinate(Qt.point(600, 600))
+                console.log("crd9 :" + crd9)
+                model.sendLatitude9(crd9.latitude)
+                model.sendLongitude9(crd9.longitude)
+                here9.text = crd9.latitude + "\n" + crd9.longitude
+                model.myQmlSlot()
+                weatherI.visible = false
+            }
+        }
 
 
         BigForecastIcon {
@@ -205,14 +411,15 @@ Window {
             width: 100
             height: 100
             opacity: 14
-            weatherIcon: (model.hasValidWeather ? model.weather.weatherIcon : "01d") //날씨 아이콘
-            topText: (model.hasValidWeather ? model.weather.temperature : "??") // 온도
-            bottomText: (model.hasValidWeather ? model.weather.weatherDescription : "No weather data") //날씨상태
+            weatherIcon: (model.hasValidWeather1 ? model.weather1.weatherIcon : "01d") //날씨 아이콘
+            topText: (model.hasValidWeather1 ? model.weather1.temperature : "??") // 온도
+            bottomText: (model.hasValidWeather1 ? model.weather1.weatherDescription : "No weather data") //날씨상태
 
             Text {
+                id:cityN1
                 x : 55
                 y : 5
-                text: qsTr(model.city ? model.city : "??")//해당도시출력
+                text: qsTr(model.city1 ? model.city1 : "??" + console.log("weather1 시티출력"))//해당도시출력
                 opacity: 1
             }
             Text{
@@ -233,15 +440,16 @@ Window {
             height: 100
             opacity: 1
 
-            weatherIcon: (model.hasValidWeather ? model.weather.weatherIcon : "01d") //날씨 아이콘
+            weatherIcon: (model.hasValidWeather2 ? model.weather2.weatherIcon : "01d") //날씨 아이콘
 
-            topText: (model.hasValidWeather ? model.weather.temperature : "??") // 온도
-            bottomText: (model.hasValidWeather ? model.weather.weatherDescription : "No weather data") //날씨상태
+            topText: (model.hasValidWeather2 ? model.weather2.temperature : "??") // 온도
+            bottomText: (model.hasValidWeather2 ? model.weather2.weatherDescription : "No weather data") //날씨상태
 
             Text {
+                id:cityN2
                 x : 55
                 y : 5
-                text: qsTr(model.city ? model.city : "??")//해당도시출력
+                text: qsTr(model.city2 ? model.city2 : "??"+ console.log("weather2 시티출력"))//해당도시출력
                 opacity: 1
             }
             Text{
@@ -261,15 +469,16 @@ Window {
             height: 100
             opacity: 1
 
-            weatherIcon: (model.hasValidWeather ? model.weather.weatherIcon : "01d") //날씨 아이콘
+            weatherIcon: (model.hasValidWeather3 ? model.weather3.weatherIcon : "01d") //날씨 아이콘
 
-            topText: (model.hasValidWeather ? model.weather.temperature : "??") // 온도
-            bottomText: (model.hasValidWeather ? model.weather.weatherDescription : "No weather data") //날씨상태
+            topText: (model.hasValidWeather3 ? model.weather3.temperature : "??") // 온도
+            bottomText: (model.hasValidWeather3 ? model.weather3.weatherDescription : "No weather data") //날씨상태
 
             Text {
+                id:cityN3
                 x : 55
                 y : 5
-                text: qsTr(model.city ? model.city : "??")//해당도시출력
+                text: qsTr(model.city3 ? model.city3 : "??"+ console.log("weather3 시티출력"))//해당도시출력
                 opacity: 1
             }
             Text{
@@ -289,15 +498,16 @@ Window {
             height: 100
             opacity: 1
 
-            weatherIcon: (model.hasValidWeather ? model.weather.weatherIcon : "01d") //날씨 아이콘
+            weatherIcon: (model.hasValidWeather4 ? model.weather4.weatherIcon : "01d") //날씨 아이콘
 
-            topText: (model.hasValidWeather ? model.weather.temperature : "??") // 온도
-            bottomText: (model.hasValidWeather ? model.weather.weatherDescription : "No weather data") //날씨상태
+            topText: (model.hasValidWeather4 ? model.weather4.temperature : "??") // 온도
+            bottomText: (model.hasValidWeather4 ? model.weather4.weatherDescription : "No weather data") //날씨상태
 
             Text {
+                id:cityN4
                 x : 55
                 y : 5
-                text: qsTr(model.city ? model.city : "??")//해당도시출력
+                text: qsTr(model.city4 ? model.city4 : "??"+ console.log("weather4 시티출력"))//해당도시출력
                 opacity: 1
             }
             Text{
@@ -317,15 +527,16 @@ Window {
             height: 100
             opacity: 1
 
-            weatherIcon: (model.hasValidWeather ? model.weather.weatherIcon : "01d") //날씨 아이콘
+            weatherIcon: (model.hasValidWeather5 ? model.weather5.weatherIcon : "01d") //날씨 아이콘
 
-            topText: (model.hasValidWeather ? model.weather.temperature : "??") // 온도
-            bottomText: (model.hasValidWeather ? model.weather.weatherDescription : "No weather data") //날씨상태
+            topText: (model.hasValidWeather5 ? model.weather5.temperature : "??") // 온도
+            bottomText: (model.hasValidWeather5 ? model.weather5.weatherDescription : "No weather data") //날씨상태
 
             Text {
+                id:cityN5
                 x : 55
                 y : 5
-                text: qsTr(model.city ? model.city : "??")//해당도시출력
+                text: qsTr(model.city5 ? model.city5 : "??"+ console.log("weather5 시티출력"))//해당도시출력
                 opacity: 1
             }
             Text{
@@ -345,15 +556,16 @@ Window {
             height: 100
             opacity: 1
 
-            weatherIcon: (model.hasValidWeather ? model.weather.weatherIcon : "01d") //날씨 아이콘
+            weatherIcon: (model.hasValidWeather6 ? model.weather6.weatherIcon : "01d") //날씨 아이콘
 
-            topText: (model.hasValidWeather ? model.weather.temperature : "??") // 온도
-            bottomText: (model.hasValidWeather ? model.weather.weatherDescription : "No weather data") //날씨상태
+            topText: (model.hasValidWeather6 ? model.weather6.temperature : "??") // 온도
+            bottomText: (model.hasValidWeather6 ? model.weather6.weatherDescription : "No weather data") //날씨상태
 
             Text {
+                id:cityN6
                 x : 55
                 y : 5
-                text: qsTr(model.city ? model.city : "??")//해당도시출력
+                text: qsTr(model.city6 ? model.city6 : "??"+ console.log("weather6 시티출력"))//해당도시출력
                 opacity: 1
             }
             Text{
@@ -373,15 +585,16 @@ Window {
             height: 100
             opacity: 1
 
-            weatherIcon: (model.hasValidWeather ? model.weather.weatherIcon : "01d") //날씨 아이콘
+            weatherIcon: (model.hasValidWeather7 ? model.weather7.weatherIcon : "01d") //날씨 아이콘
 
-            topText: (model.hasValidWeather ? model.weather.temperature : "??") // 온도
-            bottomText: (model.hasValidWeather ? model.weather.weatherDescription : "No weather data") //날씨상태
+            topText: (model.hasValidWeather7 ? model.weather7.temperature : "??") // 온도
+            bottomText: (model.hasValidWeather7 ? model.weather7.weatherDescription : "No weather data") //날씨상태
 
             Text {
+                id:cityN7
                 x : 55
                 y : 5
-                text: qsTr(model.city ? model.city : "??")//해당도시출력
+                text: qsTr(model.city7 ? model.city7 : "??"+ console.log("weather7 시티출력"))//해당도시출력
                 opacity: 1
             }
             Text{
@@ -401,15 +614,16 @@ Window {
             height: 100
             opacity: 1
 
-            weatherIcon: (model.hasValidWeather ? model.weather.weatherIcon : "01d") //날씨 아이콘
+            weatherIcon: (model.hasValidWeather8 ? model.weather8.weatherIcon : "01d") //날씨 아이콘
 
-            topText: (model.hasValidWeather ? model.weather.temperature : "??") // 온도
-            bottomText: (model.hasValidWeather ? model.weather.weatherDescription : "No weather data") //날씨상태
+            topText: (model.hasValidWeather8 ? model.weather8.temperature : "??") // 온도
+            bottomText: (model.hasValidWeather8 ? model.weather8.weatherDescription : "No weather data") //날씨상태
 
             Text {
+                id:cityN8
                 x : 55
                 y : 5
-                text: qsTr(model.city ? model.city : "??")//해당도시출력
+                text: qsTr(model.city8 ? model.city8 : "??"+ console.log("weather8 시티출력"))//해당도시출력
                 opacity: 1
             }
             Text{
@@ -429,15 +643,16 @@ Window {
             height: 100
             opacity: 1
 
-            weatherIcon: (model.hasValidWeather ? model.weather.weatherIcon : "01d") //날씨 아이콘
+            weatherIcon: (model.hasValidWeather9 ? model.weather9.weatherIcon : "01d") //날씨 아이콘
 
-            topText: (model.hasValidWeather ? model.weather.temperature : "??") // 온도
-            bottomText: (model.hasValidWeather ? model.weather.weatherDescription : "No weather data") //날씨상태
+            topText: (model.hasValidWeather9 ? model.weather9.temperature : "??") // 온도
+            bottomText: (model.hasValidWeather9 ? model.weather9.weatherDescription : "No weather data") //날씨상태
 
             Text {
+                id:cityN9
                 x : 55
                 y : 5
-                text: qsTr(model.city ? model.city : "??")//해당도시출력
+                text: qsTr(model.city9 ? model.city9 : "??"+ console.log("weather9 시티출력"))//해당도시출력
                 opacity: 1
             }
             Text{
@@ -491,10 +706,14 @@ Window {
                 /* 위도 경도 값을 콘솔창에 소수점 15자리(최대 출력 가능한 소수점)까지 출력 */
                 console.log("위도: "+crd.latitude, "경도: "+crd.longitude)
 
+
+
                 /*Appmodel의 setL~ 함수들에 qml에서 입력받은 위도경도의 텍스트 값을 Cpp로 전달해준다.*/
                 if(map.zoomLevel > 11 || map.zoomLevel < 10){
+                    console.log("qml애서 담은 좌표값을 CPP로 전달합니다.")
                     model.sendLatitude(latitudeE.text)
                     model.sendLongitude(longitudeE.text)
+                    model.myQmlSlot()
                 }
 
             }
@@ -521,7 +740,17 @@ Window {
                 markerModel.append({ "latitude": crd.latitude, "longitude": crd.longitude })
                 latitudeE.text = (crd.latitude).toFixed(4)
                 longitudeE.text = (crd.longitude).toFixed(4)
+
             }
+            onReleased: {
+                console.log("onReleased")
+
+            }
+
+
+
+
+
         }
 
         /*핀생성*/
