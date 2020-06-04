@@ -181,50 +181,6 @@ Window {
                 weatherH.visible = true
                 weatherI.visible = true
 
-//                weather1.weatherIcon = "01d"
-//                weather2.weatherIcon = "01d"
-//                weather3.weatherIcon = "01d"
-//                weather4.weatherIcon = "01d"
-//                weather5.weatherIcon = "01d"
-//                weather6.weatherIcon = "01d"
-//                weather7.weatherIcon = "01d"
-//                weather8.weatherIcon = "01d"
-//                weather9.weatherIcon = "01d"
-
-//                weather1.topText = "??"
-//                weather2.topText = "??"
-//                weather3.topText = "??"
-//                weather4.topText = "??"
-//                weather5.topText = "??"
-//                weather6.topText = "??"
-//                weather7.topText = "??"
-//                weather8.topText = "??"
-//                weather9.topText = "??"
-
-//                weather1.bottomText = "No weather data"
-//                weather2.bottomText = "No weather data"
-//                weather3.bottomText = "No weather data"
-//                weather4.bottomText = "No weather data"
-//                weather5.bottomText = "No weather data"
-//                weather6.bottomText = "No weather data"
-//                weather7.bottomText = "No weather data"
-//                weather8.bottomText = "No weather data"
-//                weather9.bottomText = "No weather data"
-
-//                cityN1.text = "??"
-//                cityN2.text = "??"
-//                cityN3.text = "??"
-//                cityN4.text = "??"
-//                cityN5.text = "??"
-//                cityN6.text = "??"
-//                cityN7.text = "??"
-//                cityN8.text = "??"
-//                cityN9.text = "??"
-
-
-
-                model.myQmlSlot()
-
 
 
             }
@@ -241,7 +197,6 @@ Window {
             onClicked:  {
                 /* 마우스 포인터 지점의 x, y 값의 위도경도 좌표값을 crd 변수에 대입 */
                 var crd1 = map.toCoordinate(Qt.point(120, 120))
-                console.log("crd1 :" + crd1)
                 model.sendLatitude1(crd1.latitude)
                 model.sendLongitude1(crd1.longitude)
                 here1.text = crd1.latitude + "\n" + crd1.longitude
@@ -260,7 +215,6 @@ Window {
             onClicked:  {
                 /* 마우스 포인터 지점의 x, y 값의 위도경도 좌표값을 crd 변수에 대입 */
                 var crd2 = map.toCoordinate(Qt.point(360, 120))
-                console.log("crd2 :" + crd2)
                 model.sendLatitude2(crd2.latitude)
                 model.sendLongitude2(crd2.longitude)
                 here2.text = crd2.latitude + "\n" + crd2.longitude
@@ -279,7 +233,6 @@ Window {
             onClicked:  {
                 /* 마우스 포인터 지점의 x, y 값의 위도경도 좌표값을 crd 변수에 대입 */
                 var crd3 = map.toCoordinate(Qt.point(600, 120))
-                console.log("crd3 :" + crd3)
                 model.sendLatitude3(crd3.latitude)
                 model.sendLongitude3(crd3.longitude)
                 here3.text = crd3.latitude + "\n" + crd3.longitude
@@ -298,7 +251,6 @@ Window {
             onClicked:  {
                 /* 마우스 포인터 지점의 x, y 값의 위도경도 좌표값을 crd 변수에 대입 */
                 var crd4 = map.toCoordinate(Qt.point(120, 360))
-                console.log("crd4 :" + crd4)
                 model.sendLatitude4(crd4.latitude)
                 model.sendLongitude4(crd4.longitude)
                 here4.text = crd4.latitude + "\n" + crd4.longitude
@@ -317,7 +269,6 @@ Window {
             onClicked:  {
                 /* 마우스 포인터 지점의 x, y 값의 위도경도 좌표값을 crd 변수에 대입 */
                 var crd5 = map.toCoordinate(Qt.point(360, 360))
-                console.log("crd5 :" + crd5)
                 model.sendLatitude5(crd5.latitude)
                 model.sendLongitude5(crd5.longitude)
                 here5.text = crd5.latitude + "\n" + crd5.longitude
@@ -336,7 +287,6 @@ Window {
             onClicked:  {
                 /* 마우스 포인터 지점의 x, y 값의 위도경도 좌표값을 crd 변수에 대입 */
                 var crd6 = map.toCoordinate(Qt.point(600, 360))
-                console.log("crd6 :" + crd6)
                 model.sendLatitude6(crd6.latitude)
                 model.sendLongitude6(crd6.longitude)
                 here6.text = crd6.latitude + "\n" + crd6.longitude
@@ -355,7 +305,6 @@ Window {
             onClicked:  {
                 /* 마우스 포인터 지점의 x, y 값의 위도경도 좌표값을 crd 변수에 대입 */
                 var crd7 = map.toCoordinate(Qt.point(120, 600))
-                console.log("crd7 :" + crd7)
                 model.sendLatitude7(crd7.latitude)
                 model.sendLongitude7(crd7.longitude)
                 here7.text = crd7.latitude + "\n" + crd7.longitude
@@ -374,7 +323,6 @@ Window {
             onClicked:  {
                 /* 마우스 포인터 지점의 x, y 값의 위도경도 좌표값을 crd 변수에 대입 */
                 var crd8 = map.toCoordinate(Qt.point(360, 600))
-                console.log("crd8 :" + crd8)
                 model.sendLatitude8(crd8.latitude)
                 model.sendLongitude8(crd8.longitude)
                 here8.text = crd8.latitude + "\n" + crd8.longitude
@@ -393,7 +341,6 @@ Window {
             onClicked:  {
                 /* 마우스 포인터 지점의 x, y 값의 위도경도 좌표값을 crd 변수에 대입 */
                 var crd9 = map.toCoordinate(Qt.point(600, 600))
-                console.log("crd9 :" + crd9)
                 model.sendLatitude9(crd9.latitude)
                 model.sendLongitude9(crd9.longitude)
                 here9.text = crd9.latitude + "\n" + crd9.longitude
@@ -419,7 +366,7 @@ Window {
                 id:cityN1
                 x : 55
                 y : 5
-                text: qsTr(model.city1 ? model.city1 : "??" + console.log("weather1 시티출력"))//해당도시출력
+                text: qsTr(model.city1 ? model.city1 : "??")//해당도시출력
                 opacity: 1
             }
             Text{
@@ -449,7 +396,7 @@ Window {
                 id:cityN2
                 x : 55
                 y : 5
-                text: qsTr(model.city2 ? model.city2 : "??"+ console.log("weather2 시티출력"))//해당도시출력
+                text: qsTr(model.city2 ? model.city2 : "??")//해당도시출력
                 opacity: 1
             }
             Text{
@@ -478,7 +425,7 @@ Window {
                 id:cityN3
                 x : 55
                 y : 5
-                text: qsTr(model.city3 ? model.city3 : "??"+ console.log("weather3 시티출력"))//해당도시출력
+                text: qsTr(model.city3 ? model.city3 : "??")//해당도시출력
                 opacity: 1
             }
             Text{
@@ -507,7 +454,7 @@ Window {
                 id:cityN4
                 x : 55
                 y : 5
-                text: qsTr(model.city4 ? model.city4 : "??"+ console.log("weather4 시티출력"))//해당도시출력
+                text: qsTr(model.city4 ? model.city4 : "??")//해당도시출력
                 opacity: 1
             }
             Text{
@@ -536,7 +483,7 @@ Window {
                 id:cityN5
                 x : 55
                 y : 5
-                text: qsTr(model.city5 ? model.city5 : "??"+ console.log("weather5 시티출력"))//해당도시출력
+                text: qsTr(model.city5 ? model.city5 : "??")//해당도시출력
                 opacity: 1
             }
             Text{
@@ -565,7 +512,7 @@ Window {
                 id:cityN6
                 x : 55
                 y : 5
-                text: qsTr(model.city6 ? model.city6 : "??"+ console.log("weather6 시티출력"))//해당도시출력
+                text: qsTr(model.city6 ? model.city6 : "??")//해당도시출력
                 opacity: 1
             }
             Text{
@@ -594,7 +541,7 @@ Window {
                 id:cityN7
                 x : 55
                 y : 5
-                text: qsTr(model.city7 ? model.city7 : "??"+ console.log("weather7 시티출력"))//해당도시출력
+                text: qsTr(model.city7 ? model.city7 : "??")//해당도시출력
                 opacity: 1
             }
             Text{
@@ -623,7 +570,7 @@ Window {
                 id:cityN8
                 x : 55
                 y : 5
-                text: qsTr(model.city8 ? model.city8 : "??"+ console.log("weather8 시티출력"))//해당도시출력
+                text: qsTr(model.city8 ? model.city8 : "??")//해당도시출력
                 opacity: 1
             }
             Text{
@@ -652,7 +599,7 @@ Window {
                 id:cityN9
                 x : 55
                 y : 5
-                text: qsTr(model.city9 ? model.city9 : "??"+ console.log("weather9 시티출력"))//해당도시출력
+                text: qsTr(model.city9 ? model.city9 : "??")//해당도시출력
                 opacity: 1
             }
             Text{
@@ -704,13 +651,11 @@ Window {
                 latitudeE.text = (crd.latitude).toFixed(4)
                 longitudeE.text = (crd.longitude).toFixed(4)
                 /* 위도 경도 값을 콘솔창에 소수점 15자리(최대 출력 가능한 소수점)까지 출력 */
-                console.log("위도: "+crd.latitude, "경도: "+crd.longitude)
 
 
 
                 /*Appmodel의 setL~ 함수들에 qml에서 입력받은 위도경도의 텍스트 값을 Cpp로 전달해준다.*/
                 if(map.zoomLevel > 11 || map.zoomLevel < 10){
-                    console.log("qml애서 담은 좌표값을 CPP로 전달합니다.")
                     model.sendLatitude(latitudeE.text)
                     model.sendLongitude(longitudeE.text)
                     model.myQmlSlot()
@@ -733,9 +678,7 @@ Window {
             onPressAndHold: {
                 /*마우스 위치값을 변수 crd에 대입*/
                 var crd = map.toCoordinate(Qt.point(mouseX, mouseY))
-                console.log(crd)
-                /*있던 핀 제거*/
-                //                markerModel.clear()
+
                 /*위치에 핀 표시*/
                 markerModel.append({ "latitude": crd.latitude, "longitude": crd.longitude })
                 latitudeE.text = (crd.latitude).toFixed(4)
@@ -744,7 +687,6 @@ Window {
             }
             onReleased: {
                 console.log("onReleased")
-
             }
 
 
@@ -926,13 +868,11 @@ Window {
                 onClicked: {
                     /* 위도 경도 입력이 없을 경우 예외처리 */
                     if(latitudeE.text == "" || longitudeE.text == ""){
-
                         console.log("위도와 경도값을 모두 입력해주세요")
                     }
                     else{
                         /* 입력된 좌표로 이동 */
                         map.center = QtPositioning.coordinate(latitudeE.text, longitudeE.text)
-                        console.log("해당 좌표로 이동합니다.")
                         map.zoomLevel = 15
                         model.sendLatitude(latitudeE.text)
                         model.sendLongitude(longitudeE.text)
@@ -954,7 +894,6 @@ Window {
                 onClicked: {
                     latitudeE.text = ""
                     longitudeE.text = ""
-                    console.log("위도,좌표 값 제거")
                 }
             }
 
