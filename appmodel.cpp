@@ -503,6 +503,8 @@ void AppModel::queryCity()
 
     qCDebug(requestsLog) << "submitting request";
 
+
+
     QNetworkReply *rep = d->nam->get(QNetworkRequest(url));
     // connect up the signal right away
     connect(rep, &QNetworkReply::finished, this, [this, rep]() {  handleGeoNetworkData(rep); });
@@ -586,6 +588,7 @@ void AppModel::handleGeoNetworkData(QNetworkReply *networkReply)
 
 
 
+
         //여기서 도시이름이 다같이 바뀌냐 안바뀌냐 예외처리
         switch (d->count) {
         case 0:
@@ -649,6 +652,10 @@ void AppModel::handleGeoNetworkData(QNetworkReply *networkReply)
             refreshWeather();
         }break;
         }
+        if(d->city.isEmpty())
+        {
+            refreshWeather();
+        }
     }else{
         hadError(true);
     }
@@ -659,10 +666,157 @@ void AppModel::handleGeoNetworkData(QNetworkReply *networkReply)
 
 void AppModel::refreshWeather()//도시값을 받아서 날씨를 데이터를 가져오는 함수
 {
-    if (d->city.isEmpty()) { //도시가 비어있으면 아래 refreshing weather skipped로그 출력
-        qCDebug(requestsLog) << "refreshing weather skipped (no city)";
-        return;
+
+    if (d->city.isEmpty()||d->city1.isEmpty()||d->city2.isEmpty()||d->city3.isEmpty()||d->city4.isEmpty()||d->city5.isEmpty()||d->city6.isEmpty()||d->city7.isEmpty()||d->city8.isEmpty()||d->city9.isEmpty()) { //도시가 비어있어도 날씨값은 출력할수있도록 함
+        switch (d->count) {
+        case 0:
+        {
+            QUrl url("http://api.openweathermap.org/data/2.5/weather?lat=""&lon=""");
+            QUrlQuery query;
+            query.addQueryItem("lat",d->latitude);
+            query.addQueryItem("lon",d->longitude);
+            query.addQueryItem("mode", "json");
+            query.addQueryItem("APPID", d->app_ident);
+            url.setQuery(query);
+
+            QNetworkReply *rep = d->nam->get(QNetworkRequest(url));
+            // connect up the signal right away //시그널을 바로 연결
+            connect(rep, &QNetworkReply::finished, this, [this, rep]() {  handleWeatherNetworkData(rep); });
+        }break;
+        case 1:
+        {
+            QUrl url("http://api.openweathermap.org/data/2.5/weather?lat=""&lon=""");
+            QUrlQuery query;
+            query.addQueryItem("lat",d->latitude1);
+            query.addQueryItem("lon",d->longitude1);
+            query.addQueryItem("mode", "json");
+            query.addQueryItem("APPID", d->app_ident);
+            url.setQuery(query);
+
+            QNetworkReply *rep = d->nam->get(QNetworkRequest(url));
+            // connect up the signal right away //시그널을 바로 연결
+            connect(rep, &QNetworkReply::finished, this, [this, rep]() {  handleWeatherNetworkData(rep); });
+        }break;
+        case 2:
+        {
+            QUrl url("http://api.openweathermap.org/data/2.5/weather?lat=""&lon=""");
+            QUrlQuery query;
+            query.addQueryItem("lat",d->latitude2);
+            query.addQueryItem("lon",d->longitude2);
+            query.addQueryItem("mode", "json");
+            query.addQueryItem("APPID", d->app_ident);
+            url.setQuery(query);
+
+            QNetworkReply *rep = d->nam->get(QNetworkRequest(url));
+            // connect up the signal right away //시그널을 바로 연결
+            connect(rep, &QNetworkReply::finished, this, [this, rep]() {  handleWeatherNetworkData(rep); });
+        }break;
+        case 3:
+        {
+            QUrl url("http://api.openweathermap.org/data/2.5/weather?lat=""&lon=""");
+            QUrlQuery query;
+            query.addQueryItem("lat",d->latitude3);
+            query.addQueryItem("lon",d->longitude3);
+            query.addQueryItem("mode", "json");
+            query.addQueryItem("APPID", d->app_ident);
+            url.setQuery(query);
+
+            QNetworkReply *rep = d->nam->get(QNetworkRequest(url));
+            // connect up the signal right away //시그널을 바로 연결
+            connect(rep, &QNetworkReply::finished, this, [this, rep]() {  handleWeatherNetworkData(rep); });
+        }break;
+        case 4:
+        {
+            QUrl url("http://api.openweathermap.org/data/2.5/weather?lat=""&lon=""");
+            QUrlQuery query;
+            query.addQueryItem("lat",d->latitude4);
+            query.addQueryItem("lon",d->longitude4);
+            query.addQueryItem("mode", "json");
+            query.addQueryItem("APPID", d->app_ident);
+            url.setQuery(query);
+
+            QNetworkReply *rep = d->nam->get(QNetworkRequest(url));
+            // connect up the signal right away //시그널을 바로 연결
+            connect(rep, &QNetworkReply::finished, this, [this, rep]() {  handleWeatherNetworkData(rep); });
+        }break;
+        case 5:
+        {
+            QUrl url("http://api.openweathermap.org/data/2.5/weather?lat=""&lon=""");
+            QUrlQuery query;
+            query.addQueryItem("lat",d->latitude5);
+            query.addQueryItem("lon",d->longitude5);
+            query.addQueryItem("mode", "json");
+            query.addQueryItem("APPID", d->app_ident);
+            url.setQuery(query);
+
+            QNetworkReply *rep = d->nam->get(QNetworkRequest(url));
+            // connect up the signal right away //시그널을 바로 연결
+            connect(rep, &QNetworkReply::finished, this, [this, rep]() {  handleWeatherNetworkData(rep); });
+        }break;
+        case 6:
+        {
+            QUrl url("http://api.openweathermap.org/data/2.5/weather?lat=""&lon=""");
+            QUrlQuery query;
+            query.addQueryItem("lat",d->latitude6);
+            query.addQueryItem("lon",d->longitude6);
+            query.addQueryItem("mode", "json");
+            query.addQueryItem("APPID", d->app_ident);
+            url.setQuery(query);
+
+            QNetworkReply *rep = d->nam->get(QNetworkRequest(url));
+            // connect up the signal right away //시그널을 바로 연결
+            connect(rep, &QNetworkReply::finished, this, [this, rep]() {  handleWeatherNetworkData(rep); });
+        }break;
+        case 7:
+        {
+            QUrl url("http://api.openweathermap.org/data/2.5/weather?lat=""&lon=""");
+            QUrlQuery query;
+            query.addQueryItem("lat",d->latitude7);
+            query.addQueryItem("lon",d->longitude7);
+            query.addQueryItem("mode", "json");
+            query.addQueryItem("APPID", d->app_ident);
+            url.setQuery(query);
+
+            QNetworkReply *rep = d->nam->get(QNetworkRequest(url));
+            // connect up the signal right away //시그널을 바로 연결
+            connect(rep, &QNetworkReply::finished, this, [this, rep]() {  handleWeatherNetworkData(rep); });
+        }break;
+        case 8:
+        {
+            QUrl url("http://api.openweathermap.org/data/2.5/weather?lat=""&lon=""");
+            QUrlQuery query;
+            query.addQueryItem("lat",d->latitude8);
+            query.addQueryItem("lon",d->longitude8);
+            query.addQueryItem("mode", "json");
+            query.addQueryItem("APPID", d->app_ident);
+            url.setQuery(query);
+
+            QNetworkReply *rep = d->nam->get(QNetworkRequest(url));
+            // connect up the signal right away //시그널을 바로 연결
+            connect(rep, &QNetworkReply::finished, this, [this, rep]() {  handleWeatherNetworkData(rep); });
+        }break;
+        case 9:
+        {
+            QUrl url("http://api.openweathermap.org/data/2.5/weather?lat=""&lon=""");
+            QUrlQuery query;
+            query.addQueryItem("lat",d->latitude9);
+            query.addQueryItem("lon",d->longitude9);
+            query.addQueryItem("mode", "json");
+            query.addQueryItem("APPID", d->app_ident);
+            url.setQuery(query);
+
+            QNetworkReply *rep = d->nam->get(QNetworkRequest(url));
+            // connect up the signal right away //시그널을 바로 연결
+            connect(rep, &QNetworkReply::finished, this, [this, rep]() {  handleWeatherNetworkData(rep); });
+        }break;
+        }
+
+
+
     }
+
+
+
     QUrl url("http://api.openweathermap.org/data/2.5/weather");
     QUrlQuery query;
 
@@ -709,6 +863,7 @@ void AppModel::refreshWeather()//도시값을 받아서 날씨를 데이터를 �
     }break;
     }
 
+
     query.addQueryItem("mode", "json");
     query.addQueryItem("APPID", d->app_ident);
     url.setQuery(query);
@@ -716,7 +871,7 @@ void AppModel::refreshWeather()//도시값을 받아서 날씨를 데이터를 �
 
     QNetworkReply *rep = d->nam->get(QNetworkRequest(url));
     // connect up the signal right away //시그널을 바로 연결
-    connect(rep, &QNetworkReply::finished, this, [this, rep]() { handleWeatherNetworkData(rep); });
+    connect(rep, &QNetworkReply::finished, this, [this, rep]() {  handleWeatherNetworkData(rep); });
 }
 
 
@@ -727,19 +882,22 @@ static QString niceTemperatureString(double t)
     return QString::number(qRound(t-ZERO_KELVIN)) + QChar(0xB0);
 }
 
-void AppModel::handleWeatherNetworkData(QNetworkReply *networkReply) //함수
+
+
+void AppModel::handleWeatherNetworkData(QNetworkReply *networkReply)
 {
     qCDebug(requestsLog) << "got weather network data";
-    if (!networkReply)
+    if (!networkReply){
         return;
+    }
 
     if (!networkReply->error()) {
         foreach (WeatherData *inf, d->forecast)
             delete inf;
         d->forecast.clear();
 
-        QJsonDocument document = QJsonDocument::fromJson(networkReply->readAll());//JSON 데이터를 사용하는 방법
-        if (document.isObject()) {//만약 JSON데이터를 가지고 있는 document가 오브젝트 타입이면
+        QJsonDocument document = QJsonDocument::fromJson(networkReply->readAll());
+        if (document.isObject()) {
             QJsonObject obj = document.object();
             QJsonObject tempObject;
             QJsonValue val;
@@ -941,113 +1099,67 @@ void AppModel::handleForecastNetworkData(QNetworkReply *networkReply)
 
 
 
-
-
-
-
-
-
-
-bool AppModel::hasValidCity() const
-{
-    return (!(d->city.isEmpty()) && d->city.size() > 1 && d->city != ""); //도시값이 비어있지 않고 도시크기값이 1보다 크고 도시의 스트링값이 비어있지 않으면 참을 리턴 즉 존재함을 보여주는 함수이다.
-}
+//bool AppModel::hasValidCity() const  // 도시값 없으면 날씨값도 못불러오게 하려는 함
+//{
+//    return (!(d->city.isEmpty()) && d->city.size() > 1 && d->city != "");
+//}
 bool AppModel::hasValidWeather() const
 {
-
-    return hasValidCity() && (!(d->now.weatherIcon().isEmpty()) && (d->now.weatherIcon().size() > 1) && d->now.weatherIcon() != "");
+    return /*hasValidCity() && */(!(d->now.weatherIcon().isEmpty()) && (d->now.weatherIcon().size() > 1) && d->now.weatherIcon() != "");
 }
-/*************************************************************************************/
-bool AppModel::hasValidCity1() const
-{
 
-    return (!(d->city1.isEmpty()) && d->city1.size() > 1 && d->city1 != ""); //도시값이 비어있지 않고 도시크기값이 1보다 크고 도시의 스트링값이 비어있지 않으면 참을 리턴 즉 존재함을 보여주는 함수이다.
-}
 bool AppModel::hasValidWeather1() const
 {
-
-    return hasValidCity1() && (!(d->now1.weatherIcon().isEmpty()) && (d->now1.weatherIcon().size() > 1) && d->now1.weatherIcon() != "");
+    return (!(d->now1.weatherIcon().isEmpty()) && (d->now1.weatherIcon().size() > 1) && d->now1.weatherIcon() != "");
 }
-/*************************************************************************************/
-bool AppModel::hasValidCity2() const
-{
 
-    return (!(d->city2.isEmpty()) && d->city2.size() > 1 && d->city2 != ""); //도시값이 비어있지 않고 도시크기값이 1보다 크고 도시의 스트링값이 비어있지 않으면 참을 리턴 즉 존재함을 보여주는 함수이다.
-}
+
 bool AppModel::hasValidWeather2() const
 {
-
-    return hasValidCity2() && (!(d->now2.weatherIcon().isEmpty()) && (d->now2.weatherIcon().size() > 1) && d->now2.weatherIcon() != "");
+    return (!(d->now2.weatherIcon().isEmpty()) && (d->now2.weatherIcon().size() > 1) && d->now2.weatherIcon() != "");
 }
-/*************************************************************************************/
-bool AppModel::hasValidCity3() const
-{
 
-    return (!(d->city3.isEmpty()) && d->city3.size() > 1 && d->city3 != ""); //도시값이 비어있지 않고 도시크기값이 1보다 크고 도시의 스트링값이 비어있지 않으면 참을 리턴 즉 존재함을 보여주는 함수이다.
-}
+
 bool AppModel::hasValidWeather3() const
 {
-
-    return hasValidCity3() && (!(d->now3.weatherIcon().isEmpty()) && (d->now3.weatherIcon().size() > 1) && d->now3.weatherIcon() != "");
+    return (!(d->now3.weatherIcon().isEmpty()) && (d->now3.weatherIcon().size() > 1) && d->now3.weatherIcon() != "");
 }
-/*************************************************************************************/
-bool AppModel::hasValidCity4() const
-{
 
-    return (!(d->city4.isEmpty()) && d->city4.size() > 1 && d->city4 != ""); //도시값이 비어있지 않고 도시크기값이 1보다 크고 도시의 스트링값이 비어있지 않으면 참을 리턴 즉 존재함을 보여주는 함수이다.
-}
+
 bool AppModel::hasValidWeather4() const
 {
-
-    return hasValidCity4() && (!(d->now4.weatherIcon().isEmpty()) && (d->now4.weatherIcon().size() > 1) && d->now4.weatherIcon() != "");
+    return (!(d->now4.weatherIcon().isEmpty()) && (d->now4.weatherIcon().size() > 1) && d->now4.weatherIcon() != "");
 }
-/*************************************************************************************/
-bool AppModel::hasValidCity5() const
-{
 
-    return (!(d->city5.isEmpty()) && d->city5.size() > 1 && d->city5 != ""); //도시값이 비어있지 않고 도시크기값이 1보다 크고 도시의 스트링값이 비어있지 않으면 참을 리턴 즉 존재함을 보여주는 함수이다.
-}
+
 bool AppModel::hasValidWeather5() const
 {
-    return hasValidCity5() && (!(d->now5.weatherIcon().isEmpty()) && (d->now5.weatherIcon().size() > 1) && d->now5.weatherIcon() != "");
+    return (!(d->now5.weatherIcon().isEmpty()) && (d->now5.weatherIcon().size() > 1) && d->now5.weatherIcon() != "");
 }
-/*************************************************************************************/
-bool AppModel::hasValidCity6() const
-{
-    return (!(d->city6.isEmpty()) && d->city6.size() > 1 && d->city6 != ""); //도시값이 비어있지 않고 도시크기값이 1보다 크고 도시의 스트링값이 비어있지 않으면 참을 리턴 즉 존재함을 보여주는 함수이다.
-}
+
+
 bool AppModel::hasValidWeather6() const
 {
-    return hasValidCity6() && (!(d->now6.weatherIcon().isEmpty()) && (d->now6.weatherIcon().size() > 1) && d->now6.weatherIcon() != "");
+    return (!(d->now6.weatherIcon().isEmpty()) && (d->now6.weatherIcon().size() > 1) && d->now6.weatherIcon() != "");
 }
-/*************************************************************************************/
-bool AppModel::hasValidCity7() const
-{
-    return (!(d->city7.isEmpty()) && d->city7.size() > 1 && d->city7 != ""); //도시값이 비어있지 않고 도시크기값이 1보다 크고 도시의 스트링값이 비어있지 않으면 참을 리턴 즉 존재함을 보여주는 함수이다.
-}
+
+
 bool AppModel::hasValidWeather7() const
 {
-    return hasValidCity7() && (!(d->now7.weatherIcon().isEmpty()) && (d->now7.weatherIcon().size() > 1) && d->now7.weatherIcon() != "");
+    return (!(d->now7.weatherIcon().isEmpty()) && (d->now7.weatherIcon().size() > 1) && d->now7.weatherIcon() != "");
 }
-/*************************************************************************************/
-bool AppModel::hasValidCity8() const
-{
-    return (!(d->city8.isEmpty()) && d->city8.size() > 1 && d->city8 != ""); //도시값이 비어있지 않고 도시크기값이 1보다 크고 도시의 스트링값이 비어있지 않으면 참을 리턴 즉 존재함을 보여주는 함수이다.
-}
+
+
 bool AppModel::hasValidWeather8() const
 {
-    return hasValidCity8() && (!(d->now8.weatherIcon().isEmpty()) && (d->now8.weatherIcon().size() > 1) && d->now8.weatherIcon() != "");
+    return (!(d->now8.weatherIcon().isEmpty()) && (d->now8.weatherIcon().size() > 1) && d->now8.weatherIcon() != "");
 }
-/*************************************************************************************/
-bool AppModel::hasValidCity9() const
-{
-    return (!(d->city9.isEmpty()) && d->city9.size() > 1 && d->city9 != ""); //도시값이 비어있지 않고 도시크기값이 1보다 크고 도시의 스트링값이 비어있지 않으면 참을 리턴 즉 존재함을 보여주는 함수이다.
-}
+
 bool AppModel::hasValidWeather9() const
 {
-    return hasValidCity9() && (!(d->now9.weatherIcon().isEmpty()) && (d->now9.weatherIcon().size() > 1) && d->now9.weatherIcon() != "");
+    return  (!(d->now9.weatherIcon().isEmpty()) && (d->now9.weatherIcon().size() > 1) && d->now9.weatherIcon() != "");
 }
-/*************************************************************************************/
+
 
 
 WeatherData *AppModel::weather() const
@@ -1187,7 +1299,6 @@ double AppModel::sendLongitude(double lon) //qml에서 위도값을 받아오는
 
 double AppModel::sendLatitude1(double lat) //qml에서 경도값을 받아오는 set함수
 {
-
     d->coord1.setLatitude(lat);
     d->count = 1;
     return lat;
@@ -1199,7 +1310,6 @@ double AppModel::sendLongitude1(double lon) //qml에서 위도값을 받아오�
 }
 double AppModel::sendLatitude2(double lat) //qml에서 경도값을 받아오는 set함수
 {
-
     d->coord2.setLatitude(lat);
     d->count = 2;
     return lat;
@@ -1211,7 +1321,6 @@ double AppModel::sendLongitude2(double lon) //qml에서 위도값을 받아오�
 }
 double AppModel::sendLatitude3(double lat) //qml에서 경도값을 받아오는 set함수
 {
-
     d->coord3.setLatitude(lat);
     d->count = 3;
     return lat;
@@ -1267,7 +1376,6 @@ double AppModel::sendLongitude7(double lon) //qml에서 위도값을 받아오�
 }
 double AppModel::sendLatitude8(double lat) //qml에서 경도값을 받아오는 set함수
 {
-
     d->coord8.setLatitude(lat);
     d->count = 8;
     return lat;

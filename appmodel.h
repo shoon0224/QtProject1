@@ -105,34 +105,16 @@ class AppModel : public QObject
     Q_PROPERTY(bool ready READ ready NOTIFY readyChanged)
     Q_PROPERTY(bool hasSource READ hasSource NOTIFY readyChanged)
 
-    Q_PROPERTY(bool hasValidCity READ hasValidCity NOTIFY cityChanged)
+//    Q_PROPERTY(bool hasValidCity READ hasValidCity NOTIFY cityChanged)
     Q_PROPERTY(bool hasValidWeather READ hasValidWeather NOTIFY weatherChanged)
-
-    Q_PROPERTY(bool hasValidCity1 READ hasValidCity1 NOTIFY cityChanged)
     Q_PROPERTY(bool hasValidWeather1 READ hasValidWeather1 NOTIFY weatherChanged)
-
-    Q_PROPERTY(bool hasValidCity2 READ hasValidCity2 NOTIFY cityChanged)
     Q_PROPERTY(bool hasValidWeather2 READ hasValidWeather2 NOTIFY weatherChanged)
-
-    Q_PROPERTY(bool hasValidCity3 READ hasValidCity3 NOTIFY cityChanged)
     Q_PROPERTY(bool hasValidWeather3 READ hasValidWeather3 NOTIFY weatherChanged)
-
-    Q_PROPERTY(bool hasValidCity4 READ hasValidCity4 NOTIFY cityChanged)
     Q_PROPERTY(bool hasValidWeather4 READ hasValidWeather4 NOTIFY weatherChanged)
-
-    Q_PROPERTY(bool hasValidCity5 READ hasValidCity5 NOTIFY cityChanged)
     Q_PROPERTY(bool hasValidWeather5 READ hasValidWeather5 NOTIFY weatherChanged)
-
-    Q_PROPERTY(bool hasValidCity6 READ hasValidCity6 NOTIFY cityChanged)
     Q_PROPERTY(bool hasValidWeather6 READ hasValidWeather6 NOTIFY weatherChanged)
-
-    Q_PROPERTY(bool hasValidCity7 READ hasValidCity7 NOTIFY cityChanged)
     Q_PROPERTY(bool hasValidWeather7 READ hasValidWeather7 NOTIFY weatherChanged)
-
-    Q_PROPERTY(bool hasValidCity8 READ hasValidCity8 NOTIFY cityChanged)
     Q_PROPERTY(bool hasValidWeather8 READ hasValidWeather8 NOTIFY weatherChanged)
-
-    Q_PROPERTY(bool hasValidCity9 READ hasValidCity9 NOTIFY cityChanged)
     Q_PROPERTY(bool hasValidWeather9 READ hasValidWeather9 NOTIFY weatherChanged)
 
     Q_PROPERTY(bool useGps READ useGps WRITE setUseGps NOTIFY useGpsChanged)
@@ -170,25 +152,16 @@ public:
     bool ready() const;
     bool hasSource() const;
     bool useGps() const;
-    bool hasValidCity() const;
+//    bool hasValidCity() const; 도시값없으면 날씨 못불러오게 할려고 만들어놨던 함수
     bool hasValidWeather() const;
-    bool hasValidCity1() const;
     bool hasValidWeather1() const;
-    bool hasValidCity2() const;
     bool hasValidWeather2() const;
-    bool hasValidCity3() const;
     bool hasValidWeather3() const;
-    bool hasValidCity4() const;
     bool hasValidWeather4() const;
-    bool hasValidCity5() const;
     bool hasValidWeather5() const;
-    bool hasValidCity6() const;
     bool hasValidWeather6() const;
-    bool hasValidCity7() const;
     bool hasValidWeather7() const;
-    bool hasValidCity8() const;
     bool hasValidWeather8() const;
-    bool hasValidCity9() const;
     bool hasValidWeather9() const;
     void setUseGps(bool value);
     void hadError(bool tryAgain);

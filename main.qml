@@ -21,7 +21,7 @@ Window {
     maximumHeight: minimumHeight
 
 
-    /*appmodel.cpp */
+
     AppModel {
         id: model
         onReadyChanged: {
@@ -136,6 +136,34 @@ Window {
             z: parent.z + 10
         }
 
+
+        MapItemView {
+            model: ListModel {
+                id: weatherModel
+            }
+            delegate: Component {
+                MapQuickItem {
+                    coordinate: QtPositioning.coordinate(latitudeE.text, longitudeE.text)
+                    sourceItem: Shape {
+                        visible: true
+                        BigForecastIcon {
+                            id:solo
+                            x:-25
+                            y:-25
+                            visible: (map.zoomLevel >= 10 && map.zoomLevel <= 11 ? false : true)
+                            //아이콘 크기
+                            width: 50
+                            height: 50
+                            opacity: 1
+                            weatherIcon: (console.log("이미지 로딩 완료") + model.hasValidWeather ? model.weather.weatherIcon : "01d")//날씨 아이콘
+                            topText: (model.hasValidWeather ? model.weather.temperature : "??") // 온도
+                            bottomText: (model.hasValidWeather ? model.weather.weatherDescription : "") //날씨상태
+                        }
+                    }
+                }
+            }
+        }
+
         /*날씨 표시 구역*/
         BigForecastIcon {
             id:solo
@@ -146,22 +174,17 @@ Window {
             width: 100
             height: 100
             opacity: 1
-
             weatherIcon: (model.hasValidWeather ? model.weather.weatherIcon : "01d")//날씨 아이콘
-            topText: (model.hasValidWeather ? model.weather.temperature : "??") // 온도
-            bottomText: (model.hasValidWeather ? model.weather.weatherDescription : "No weather data") //날씨상태
-
-            Text {
-                x : 55
-                y : 5
-                text: qsTr(model.city ? model.city : "??")//해당도시출력
-                opacity: 1
-
-            }
-
-
-
+            topText: (model.hasValidWeather ? model.weather.temperature : "") // 온도
+            bottomText: (model.hasValidWeather ? model.weather.weatherDescription : "") //날씨상태
+            //            Text {
+            //                x : 55
+            //                y : 5
+            //                text: qsTr(model.city ? model.city : "??")//해당도시출력
+            //                opacity: 1
+            //            }
         }
+
         Button{
             id:visibleBut
 
@@ -357,18 +380,18 @@ Window {
             visible: (map.zoomLevel >= 10 && map.zoomLevel <= 11 ? true : false)
             width: 100
             height: 100
-            opacity: 14
+            opacity: (model.weather1.weatherIcon ? 1 : 0.3)
             weatherIcon: (model.hasValidWeather1 ? model.weather1.weatherIcon : "01d") //날씨 아이콘
             topText: (model.hasValidWeather1 ? model.weather1.temperature : "??") // 온도
             bottomText: (model.hasValidWeather1 ? model.weather1.weatherDescription : "No weather data") //날씨상태
 
-            Text {
-                id:cityN1
-                x : 55
-                y : 5
-                text: qsTr(model.city1 ? model.city1 : "??")//해당도시출력
-                opacity: 1
-            }
+            //            Text {
+            //                id:cityN1
+            //                x : 55
+            //                y : 5
+            //                text: qsTr(model.city1 ? model.city1 : "??")//해당도시출력
+            //                opacity: 1
+            //            }
             Text{
                 id:here1
                 x:0
@@ -385,20 +408,20 @@ Window {
             visible: (map.zoomLevel >= 10 && map.zoomLevel <= 11 ? true : false)
             width: 100
             height: 100
-            opacity: 1
+            opacity: (model.weather2.weatherIcon ? 1 : 0.3)
 
             weatherIcon: (model.hasValidWeather2 ? model.weather2.weatherIcon : "01d") //날씨 아이콘
 
             topText: (model.hasValidWeather2 ? model.weather2.temperature : "??") // 온도
             bottomText: (model.hasValidWeather2 ? model.weather2.weatherDescription : "No weather data") //날씨상태
 
-            Text {
-                id:cityN2
-                x : 55
-                y : 5
-                text: qsTr(model.city2 ? model.city2 : "??")//해당도시출력
-                opacity: 1
-            }
+            //            Text {
+            //                id:cityN2
+            //                x : 55
+            //                y : 5
+            //                text: qsTr(model.city2 ? model.city2 : "??")//해당도시출력
+            //                opacity: 1
+            //            }
             Text{
                 id:here2
                 x:0
@@ -414,20 +437,20 @@ Window {
             visible: (map.zoomLevel >= 10 && map.zoomLevel <= 11 ? true : false)
             width: 100
             height: 100
-            opacity: 1
+           opacity: (model.weather3.weatherIcon ? 1 : 0.3)
 
             weatherIcon: (model.hasValidWeather3 ? model.weather3.weatherIcon : "01d") //날씨 아이콘
 
             topText: (model.hasValidWeather3 ? model.weather3.temperature : "??") // 온도
             bottomText: (model.hasValidWeather3 ? model.weather3.weatherDescription : "No weather data") //날씨상태
 
-            Text {
-                id:cityN3
-                x : 55
-                y : 5
-                text: qsTr(model.city3 ? model.city3 : "??")//해당도시출력
-                opacity: 1
-            }
+            //            Text {
+            //                id:cityN3
+            //                x : 55
+            //                y : 5
+            //                text: qsTr(model.city3 ? model.city3 : "??")//해당도시출력
+            //                opacity: 1
+            //            }
             Text{
                 id:here3
                 x:0
@@ -443,20 +466,20 @@ Window {
             visible: (map.zoomLevel >= 10 && map.zoomLevel <= 11 ? true : false)
             width: 100
             height: 100
-            opacity: 1
+            opacity: (model.weather4.weatherIcon ? 1 : 0.3)
 
             weatherIcon: (model.hasValidWeather4 ? model.weather4.weatherIcon : "01d") //날씨 아이콘
 
             topText: (model.hasValidWeather4 ? model.weather4.temperature : "??") // 온도
             bottomText: (model.hasValidWeather4 ? model.weather4.weatherDescription : "No weather data") //날씨상태
 
-            Text {
-                id:cityN4
-                x : 55
-                y : 5
-                text: qsTr(model.city4 ? model.city4 : "??")//해당도시출력
-                opacity: 1
-            }
+            //            Text {
+            //                id:cityN4
+            //                x : 55
+            //                y : 5
+            //                text: qsTr(model.city4 ? model.city4 : "??")//해당도시출력
+            //                opacity: 1
+            //            }
             Text{
                 id:here4
                 x:0
@@ -472,20 +495,20 @@ Window {
             visible: (map.zoomLevel >= 10 && map.zoomLevel <= 11 ? true : false)
             width: 100
             height: 100
-            opacity: 1
+            opacity: (model.weather5.weatherIcon ? 1 : 0.3)
 
             weatherIcon: (model.hasValidWeather5 ? model.weather5.weatherIcon : "01d") //날씨 아이콘
 
             topText: (model.hasValidWeather5 ? model.weather5.temperature : "??") // 온도
             bottomText: (model.hasValidWeather5 ? model.weather5.weatherDescription : "No weather data") //날씨상태
 
-            Text {
-                id:cityN5
-                x : 55
-                y : 5
-                text: qsTr(model.city5 ? model.city5 : "??")//해당도시출력
-                opacity: 1
-            }
+            //            Text {
+            //                id:cityN5
+            //                x : 55
+            //                y : 5
+            //                text: qsTr(model.city5 ? model.city5 : "??")//해당도시출력
+            //                opacity: 1
+            //            }
             Text{
                 id:here5
                 x:0
@@ -501,20 +524,20 @@ Window {
             visible: (map.zoomLevel >= 10 && map.zoomLevel <= 11 ? true : false)
             width: 100
             height: 100
-            opacity: 1
+            opacity: (model.weather6.weatherIcon ? 1 : 0.3)
 
             weatherIcon: (model.hasValidWeather6 ? model.weather6.weatherIcon : "01d") //날씨 아이콘
 
             topText: (model.hasValidWeather6 ? model.weather6.temperature : "??") // 온도
             bottomText: (model.hasValidWeather6 ? model.weather6.weatherDescription : "No weather data") //날씨상태
 
-            Text {
-                id:cityN6
-                x : 55
-                y : 5
-                text: qsTr(model.city6 ? model.city6 : "??")//해당도시출력
-                opacity: 1
-            }
+            //            Text {
+            //                id:cityN6
+            //                x : 55
+            //                y : 5
+            //                text: qsTr(model.city6 ? model.city6 : "??")//해당도시출력
+            //                opacity: 1
+            //            }
             Text{
                 id:here6
                 x:0
@@ -530,20 +553,20 @@ Window {
             visible: (map.zoomLevel >= 10 && map.zoomLevel <= 11 ? true : false)
             width: 100
             height: 100
-            opacity: 1
+            opacity: (model.weather7.weatherIcon ? 1 : 0.3)
 
             weatherIcon: (model.hasValidWeather7 ? model.weather7.weatherIcon : "01d") //날씨 아이콘
 
             topText: (model.hasValidWeather7 ? model.weather7.temperature : "??") // 온도
             bottomText: (model.hasValidWeather7 ? model.weather7.weatherDescription : "No weather data") //날씨상태
 
-            Text {
-                id:cityN7
-                x : 55
-                y : 5
-                text: qsTr(model.city7 ? model.city7 : "??")//해당도시출력
-                opacity: 1
-            }
+            //            Text {
+            //                id:cityN7
+            //                x : 55
+            //                y : 5
+            //                text: qsTr(model.city7 ? model.city7 : "??")//해당도시출력
+            //                opacity: 1
+            //            }
             Text{
                 id:here7
                 x:0
@@ -559,20 +582,20 @@ Window {
             visible: (map.zoomLevel >= 10 && map.zoomLevel <= 11 ? true : false)
             width: 100
             height: 100
-            opacity: 1
+            opacity: (model.weather8.weatherIcon ? 1 : 0.3)
 
             weatherIcon: (model.hasValidWeather8 ? model.weather8.weatherIcon : "01d") //날씨 아이콘
 
             topText: (model.hasValidWeather8 ? model.weather8.temperature : "??") // 온도
             bottomText: (model.hasValidWeather8 ? model.weather8.weatherDescription : "No weather data") //날씨상태
 
-            Text {
-                id:cityN8
-                x : 55
-                y : 5
-                text: qsTr(model.city8 ? model.city8 : "??")//해당도시출력
-                opacity: 1
-            }
+            //            Text {
+            //                id:cityN8
+            //                x : 55
+            //                y : 5
+            //                text: qsTr(model.city8 ? model.city8 : "??")//해당도시출력
+            //                opacity: 1
+            //            }
             Text{
                 id:here8
                 x:0
@@ -588,20 +611,20 @@ Window {
             visible: (map.zoomLevel >= 10 && map.zoomLevel <= 11 ? true : false)
             width: 100
             height: 100
-            opacity: 1
+            opacity: (model.weather9.weatherIcon ? 1 : 0.3)
 
             weatherIcon: (model.hasValidWeather9 ? model.weather9.weatherIcon : "01d") //날씨 아이콘
 
             topText: (model.hasValidWeather9 ? model.weather9.temperature : "??") // 온도
             bottomText: (model.hasValidWeather9 ? model.weather9.weatherDescription : "No weather data") //날씨상태
 
-            Text {
-                id:cityN9
-                x : 55
-                y : 5
-                text: qsTr(model.city9 ? model.city9 : "??")//해당도시출력
-                opacity: 1
-            }
+            //            Text {
+            //                id:cityN9
+            //                x : 55
+            //                y : 5
+            //                text: qsTr(model.city9 ? model.city9 : "??")//해당도시출력
+            //                opacity: 1
+            //            }
             Text{
                 id:here9
                 x:0
@@ -640,11 +663,13 @@ Window {
             acceptedButtons: Qt.LeftButton | Qt.RightButton1
             enabled: (map.zoomLevel > 11 || map.zoomLevel < 10 ? true : false) // 이 예외처리를 안해주면 위에 버튼클릭이 안됨
 
+
             /* 클릭 했을 시 이벤트 핸들러 */
             onClicked:  {
                 /* 마우스 포인터 지점의 x, y 값의 위도경도 좌표값을 crd 변수에 대입 */
                 var crd = map.toCoordinate(Qt.point(mouseX, mouseY))
 
+                /*클릭 위치에 날씨 표시*/
 
                 /* 아래에 있는 textEdit의 text값에 위 좌표값의 각각 경도와 위도값을 toFixed(4)를 이용하여*/
                 /* 소수점 4자리 까지 출력 */
@@ -652,13 +677,15 @@ Window {
                 longitudeE.text = (crd.longitude).toFixed(4)
                 /* 위도 경도 값을 콘솔창에 소수점 15자리(최대 출력 가능한 소수점)까지 출력 */
 
-
-
                 /*Appmodel의 setL~ 함수들에 qml에서 입력받은 위도경도의 텍스트 값을 Cpp로 전달해준다.*/
                 if(map.zoomLevel > 11 || map.zoomLevel < 10){
                     model.sendLatitude(latitudeE.text)
                     model.sendLongitude(longitudeE.text)
                     model.myQmlSlot()
+
+                    weatherModel.append({ "latitude": crd.latitude, "longitude": crd.longitude })
+
+
                 }
 
             }
@@ -675,86 +702,85 @@ Window {
                     map.zoomLevel = map.zoomLevel - 2
             }
             /*길게 누를 시 핀 생성*/
-            onPressAndHold: {
-                /*마우스 위치값을 변수 crd에 대입*/
-                var crd = map.toCoordinate(Qt.point(mouseX, mouseY))
+//            onPressAndHold: {
+//                /*마우스 위치값을 변수 crd에 대입*/
+//                var crd = map.toCoordinate(Qt.point(mouseX, mouseY))
 
-                /*위치에 핀 표시*/
-                markerModel.append({ "latitude": crd.latitude, "longitude": crd.longitude })
-                latitudeE.text = (crd.latitude).toFixed(4)
-                longitudeE.text = (crd.longitude).toFixed(4)
+//                /*위치에 핀 표시*/
+//                markerModel.append({ "latitude": crd.latitude, "longitude": crd.longitude })
+//                latitudeE.text = (crd.latitude).toFixed(4)
+//                longitudeE.text = (crd.longitude).toFixed(4)
 
-            }
-            onReleased: {
-                console.log("onReleased")
-            }
-
-
-
-
-
+//            }
+//            onPressAndHold:  {
+//                console.log("꾹눌렀을때")
+//                var crd = map.toCoordinate(Qt.point(mouseX, mouseY))
+//                weatherModel.append({ "latitude": crd.latitude, "longitude": crd.longitude })
+//            }
         }
 
-        /*핀생성*/
-        MapItemView {
-            id: mivMarker
 
-            /*핀 형태*/
-            model: ListModel {
-                id: markerModel
-            }
 
-            delegate: Component {
-                MapQuickItem {
-                    coordinate: QtPositioning.coordinate(latitude, longitude)
-                    anchorPoint: Qt.point(e1.width * 0.5, e1.height + slideIn)
-                    property real slideIn : 0
-                    sourceItem: Shape {
-                        id: e1
-                        vendorExtensionsEnabled: false
-                        width: 15
-                        height: 15
-                        visible: true
+//        /*핀생성*/
+//        MapItemView {
+//            id: mivMarker
 
-                        /*위아래 좌표값*/
-                        transform: Scale {
-                            origin.y: e1.height * 0.5
-                            yScale: -1
-                        }
+//            /*핀 형태*/
+//            model: ListModel {
+//                id: markerModel
+//            }
 
-                        ShapePath {
-                            id: c_sp1
+//            delegate: Component {
+//                MapQuickItem {
+//                    coordinate: QtPositioning.coordinate(latitude, longitude)
+//                    anchorPoint: Qt.point(e1.width * 0.5, e1.height + slideIn)
+//                    property real slideIn : 0
+//                    sourceItem: Shape {
+//                        id: e1
+//                        vendorExtensionsEnabled: false
+//                        width: 15
+//                        height: 15
+//                        visible: true
 
-                            /*핀 테두리 두께*/
-                            strokeWidth: -1
+//                        /*위아래 좌표값*/
+//                        transform: Scale {
+//                            origin.y: e1.height * 0.5
+//                            yScale: -1
+//                        }
 
-                            /* 핀 색상 */
-                            fillColor: "red"
+//                        ShapePath {
+//                            id: c_sp1
 
-                            /*마우스 포인트 끝지점 오차계산*/
-                            /*상하 오차값*/
-                            property real half: e1.width * 0.5
-                            /*좌우 오차값*/
-                            property point center: Qt.point(e1.x + e1.width * 0.5 , e1.y + e1.height * 0.5)
+//                            /*핀 테두리 두께*/
+//                            strokeWidth: -1
 
-                            /*핀 모양 계산 값*/
-                            property point top: Qt.point(center.x, center.y - half )
-                            property point bottomLeft: Qt.point(center.x - half, center.y + half )
-                            property point bottomRight: Qt.point(center.x + half, center.y + half )
+//                            /* 핀 색상 */
+//                            fillColor: "red"
 
-                            startX: center.x;
-                            startY: center.y + half
+//                            /*마우스 포인트 끝지점 오차계산*/
+//                            /*상하 오차값*/
+//                            property real half: e1.width * 0.5
+//                            /*좌우 오차값*/
+//                            property point center: Qt.point(e1.x + e1.width * 0.5 , e1.y + e1.height * 0.5)
 
-                            /*핀모양 (그리기)생성*/
-                            PathLine { x: c_sp1.bottomLeft.x; y: c_sp1.bottomLeft.y }
-                            PathLine { x: c_sp1.top.x; y: c_sp1.top.y }
-                            PathLine { x: c_sp1.bottomRight.x; y: c_sp1.bottomRight.y }
-                            PathLine { x: c_sp1.center.x; y: c_sp1.center.y + c_sp1.half }
-                        }
-                    }
-                }
-            }
-        }
+//                            /*핀 모양 계산 값*/
+//                            property point top: Qt.point(center.x, center.y - half )
+//                            property point bottomLeft: Qt.point(center.x - half, center.y + half )
+//                            property point bottomRight: Qt.point(center.x + half, center.y + half )
+
+//                            startX: center.x;
+//                            startY: center.y + half
+
+//                            /*핀모양 (그리기)생성*/
+//                            PathLine { x: c_sp1.bottomLeft.x; y: c_sp1.bottomLeft.y }
+//                            PathLine { x: c_sp1.top.x; y: c_sp1.top.y }
+//                            PathLine { x: c_sp1.bottomRight.x; y: c_sp1.bottomRight.y }
+//                            PathLine { x: c_sp1.center.x; y: c_sp1.center.y + c_sp1.half }
+//                        }
+//                    }
+//                }
+//            }
+//        }
 
         /*좌측 위도경도 표시 레이어*/
         Rectangle{
