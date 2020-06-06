@@ -105,7 +105,7 @@ class AppModel : public QObject
     Q_PROPERTY(bool ready READ ready NOTIFY readyChanged)
     Q_PROPERTY(bool hasSource READ hasSource NOTIFY readyChanged)
 
-//    Q_PROPERTY(bool hasValidCity READ hasValidCity NOTIFY cityChanged)
+    //    Q_PROPERTY(bool hasValidCity READ hasValidCity NOTIFY cityChanged)
     Q_PROPERTY(bool hasValidWeather READ hasValidWeather NOTIFY weatherChanged)
     Q_PROPERTY(bool hasValidWeather1 READ hasValidWeather1 NOTIFY weatherChanged)
     Q_PROPERTY(bool hasValidWeather2 READ hasValidWeather2 NOTIFY weatherChanged)
@@ -116,19 +116,6 @@ class AppModel : public QObject
     Q_PROPERTY(bool hasValidWeather7 READ hasValidWeather7 NOTIFY weatherChanged)
     Q_PROPERTY(bool hasValidWeather8 READ hasValidWeather8 NOTIFY weatherChanged)
     Q_PROPERTY(bool hasValidWeather9 READ hasValidWeather9 NOTIFY weatherChanged)
-
-    Q_PROPERTY(bool useGps READ useGps WRITE setUseGps NOTIFY useGpsChanged)
-
-    Q_PROPERTY(QString city READ city WRITE setCity NOTIFY cityChanged)
-    Q_PROPERTY(QString city1 READ city1 WRITE setCity NOTIFY cityChanged)
-    Q_PROPERTY(QString city2 READ city2 WRITE setCity NOTIFY cityChanged)
-    Q_PROPERTY(QString city3 READ city3 WRITE setCity NOTIFY cityChanged)
-    Q_PROPERTY(QString city4 READ city4 WRITE setCity NOTIFY cityChanged)
-    Q_PROPERTY(QString city5 READ city5 WRITE setCity NOTIFY cityChanged)
-    Q_PROPERTY(QString city6 READ city6 WRITE setCity NOTIFY cityChanged)
-    Q_PROPERTY(QString city7 READ city7 WRITE setCity NOTIFY cityChanged)
-    Q_PROPERTY(QString city8 READ city8 WRITE setCity NOTIFY cityChanged)
-    Q_PROPERTY(QString city9 READ city9 WRITE setCity NOTIFY cityChanged)
 
     Q_PROPERTY(WeatherData *weather READ weather NOTIFY weatherChanged)
     Q_PROPERTY(WeatherData *weather1 READ weather1 NOTIFY weatherChanged)
@@ -141,7 +128,6 @@ class AppModel : public QObject
     Q_PROPERTY(WeatherData *weather8 READ weather8 NOTIFY weatherChanged)
     Q_PROPERTY(WeatherData *weather9 READ weather9 NOTIFY weatherChanged)
 
-    Q_PROPERTY(QQmlListProperty<WeatherData> forecast READ forecast NOTIFY weatherChanged)
 
 
 
@@ -151,8 +137,7 @@ public:
     ~AppModel();
     bool ready() const;
     bool hasSource() const;
-    bool useGps() const;
-//    bool hasValidCity() const; 도시값없으면 날씨 못불러오게 할려고 만들어놨던 함수
+    //    bool hasValidCity() const; 도시값없으면 날씨 못불러오게 할려고 만들어놨던 함수
     bool hasValidWeather() const;
     bool hasValidWeather1() const;
     bool hasValidWeather2() const;
@@ -163,23 +148,6 @@ public:
     bool hasValidWeather7() const;
     bool hasValidWeather8() const;
     bool hasValidWeather9() const;
-    void setUseGps(bool value);
-    void hadError(bool tryAgain);
-
-    QString city() const;
-    QString city1() const;
-    QString city2() const;
-    QString city3() const;
-    QString city4() const;
-    QString city5() const;
-    QString city6() const;
-    QString city7() const;
-    QString city8() const;
-    QString city9() const;
-
-
-
-    void setCity(const QString &value);
 
     WeatherData *weather() const;
     WeatherData *weather1() const;
@@ -191,11 +159,9 @@ public:
     WeatherData *weather7() const;
     WeatherData *weather8() const;
     WeatherData *weather9() const;
-    QQmlListProperty<WeatherData> forecast() const;
 
 
 public slots:
-    Q_INVOKABLE void refreshWeather();
     double sendLatitude(double lat);//추가
     double sendLongitude(double lon);//추가
     double sendLatitude1(double lat);//추가
@@ -225,27 +191,17 @@ public slots:
 
     //! [2]
 private slots:
-    void queryCity();
-    void tidalCurrent();//추가
+    void queryWeather();
     void networkSessionOpened();
     void positionUpdated(QGeoPositionInfo gpsPos);
-    void positionError(QGeoPositionInfoSource::Error e);
-    void handleGeoNetworkData(QNetworkReply *networkReply);
     void handleWeatherNetworkData(QNetworkReply *networkReply);
-    void handleForecastNetworkData(QNetworkReply *networkReply);
-    void handleTidalCurrentNetworkData(QNetworkReply *networkReply);//추가
+
 
 
     //! [3]
 signals:
     void readyChanged();
-    void useGpsChanged();
-    void cityChanged();
     void weatherChanged();
-    void weatherChanged9();
-    void weatherChanged8();
-    void weatherChanged7();
-    void latitudeChanged();
 
 
 
