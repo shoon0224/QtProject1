@@ -8,7 +8,6 @@ import QtQuick.Shapes 1.12 //핀모양 만들기
 import WeatherInfo 1.0
 import "components"
 
-
 Window {
     /*윈도우 속성값들*/
     id: win
@@ -18,8 +17,6 @@ Window {
     minimumHeight: 720
     maximumWidth: minimumWidth
     maximumHeight: minimumHeight
-
-
 
     AppModel {
         id: model
@@ -32,12 +29,6 @@ Window {
             }
         }
     }
-
-
-
-
-
-
 
     Plugin{
         /*Map Api 관련 값인 것 같음*/
@@ -57,7 +48,6 @@ Window {
         plugin:mapPlugin
         /*디버깅시 지도 시작 default Coordinate 값*/
         center: QtPositioning.coordinate(xLati,yLongi)
-        /*디버깅시 지도확대 정도 값*/
         zoomLevel: 16
 
 
@@ -120,92 +110,293 @@ Window {
             weatherIcon: (model.hasValidWeather ? model.weather.weatherIcon : "01d")//날씨 아이콘
             topText: (model.hasValidWeather ? model.weather.temperature : "") // 온도
             bottomText: (model.hasValidWeather ? model.weather.weatherDescription : "") //날씨상태
-
         }
+
 
 
         Item {
             focus: true
-            Keys.onPressed: {
-                if(map.zoomLevel > 11 || map.zoomLevel < 10)
-                {
-                    switch(event.key){
-                    case Qt.Key_Return:
-                        var crd = map.toCoordinate(Qt.point(360, 360))
+            Keys.onPressed:  {
+
+                var crd = map.toCoordinate(Qt.point(360, 360))
+                var crd1 = map.toCoordinate(Qt.point(120, 120))
+                var crd2 = map.toCoordinate(Qt.point(360, 120))
+                var crd3 = map.toCoordinate(Qt.point(600, 120))
+                var crd4 = map.toCoordinate(Qt.point(120, 360))
+                var crd5 = map.toCoordinate(Qt.point(360, 360))
+                var crd6 = map.toCoordinate(Qt.point(600, 360))
+                var crd7 = map.toCoordinate(Qt.point(120, 600))
+                var crd8 = map.toCoordinate(Qt.point(360, 600))
+                var crd9 = map.toCoordinate(Qt.point(600, 600))
+
+                var speed;
+                if(map.zoomLevel > 1.4 && map.zoomLevel < 2.0)
+                    speed = 5
+                if(map.zoomLevel >= 2.0 && map.zoomLevel < 3.0)
+                    speed = 3
+                if(map.zoomLevel >= 3.0 && map.zoomLevel < 4.0)
+                    speed = 2
+                if(map.zoomLevel >= 4.0 && map.zoomLevel < 5.0)
+                    speed = 1
+                if(map.zoomLevel >= 5.0 && map.zoomLevel < 6.0)
+                    speed = 0.5
+                if(map.zoomLevel >= 6.0 && map.zoomLevel < 7.0)
+                    speed = 0.1
+                if(map.zoomLevel >= 7.0 && map.zoomLevel < 8.0)
+                    speed = 0.08
+                if(map.zoomLevel >= 8.0 && map.zoomLevel <9.0)
+                    speed = 0.05
+                if(map.zoomLevel >= 9.0 && map.zoomLevel < 10.0)
+                    speed = 0.03
+                if(map.zoomLevel >= 10.0 && map.zoomLevel < 11.0)
+                    speed = 0.01
+                if(map.zoomLevel >= 11.0 && map.zoomLevel < 12.0)
+                    speed = 0.009
+                if(map.zoomLevel >= 12.0 && map.zoomLevel < 13.0)
+                    speed = 0.004
+                if(map.zoomLevel >= 13.0 && map.zoomLevel < 14.0)
+                    speed = 0.002
+                if(map.zoomLevel >= 14.0 && map.zoomLevel < 15.0)
+                    speed = 0.001
+                if(map.zoomLevel >= 15.0 && map.zoomLevel < 16.0)
+                    speed = 0.0008
+                if(map.zoomLevel >= 16.0 && map.zoomLevel < 17.0)
+                    speed = 0.0003
+                if(map.zoomLevel >= 17.0 && map.zoomLevel <= 18.0)
+                    speed = 0.0001
+
+
+
+
+                switch(event.key){
+                case Qt.Key_Left:
+                    map.center = QtPositioning.coordinate(map.center.latitude ,map.center.longitude - speed)
+                    if(map.zoomLevel > 11 || map.zoomLevel < 10)
+                    {
                         latitudeE.text = (crd.latitude).toFixed(4)
                         longitudeE.text = (crd.longitude).toFixed(4)
                         model.sendLatitude(crd.latitude)
                         model.sendLongitude(crd.longitude)
                         model.myQmlSlot5()
                     }
-                }
-                if(map.zoomLevel >= 10 && map.zoomLevel <= 11)
-                {
-                    switch(event.key){
-                    case Qt.Key_Return:
-                        console.log("crd1")
-                        var crd1 = map.toCoordinate(Qt.point(120, 120))
+                    if(map.zoomLevel >= 10 && map.zoomLevel <= 11)
+                    {
                         model.sendLatitude(crd1.latitude)
                         model.sendLongitude(crd1.longitude)
                         here1.text = crd1.latitude + "\n" + crd1.longitude
                         model.myQmlSlot1()
 
-                        console.log("crd2")
-                        var crd2 = map.toCoordinate(Qt.point(360, 120))
                         model.sendLatitude(crd2.latitude)
                         model.sendLongitude(crd2.longitude)
                         here2.text = crd2.latitude + "\n" + crd2.longitude
                         model.myQmlSlot2()
 
-                        console.log("crd3")
-                        var crd3 = map.toCoordinate(Qt.point(600, 120))
                         model.sendLatitude(crd3.latitude)
                         model.sendLongitude(crd3.longitude)
                         here3.text = crd3.latitude + "\n" + crd3.longitude
                         model.myQmlSlot3()
 
-                        console.log("crd4")
-                        var crd4 = map.toCoordinate(Qt.point(120, 360))
                         model.sendLatitude(crd4.latitude)
                         model.sendLongitude(crd4.longitude)
                         here4.text = crd4.latitude + "\n" + crd4.longitude
                         model.myQmlSlot4()
 
-                        console.log("crd5")
-                        var crd5 = map.toCoordinate(Qt.point(360, 360))
                         model.sendLatitude(crd5.latitude)
                         model.sendLongitude(crd5.longitude)
                         here5.text = crd5.latitude + "\n" + crd5.longitude
                         model.myQmlSlot5()
 
-                        console.log("crd6")
-                        var crd6 = map.toCoordinate(Qt.point(600, 360))
                         model.sendLatitude(crd6.latitude)
                         model.sendLongitude(crd6.longitude)
                         here6.text = crd6.latitude + "\n" + crd6.longitude
                         model.myQmlSlot6()
 
-                        console.log("crd7")
-                        var crd7 = map.toCoordinate(Qt.point(120, 600))
                         model.sendLatitude(crd7.latitude)
                         model.sendLongitude(crd7.longitude)
                         here7.text = crd7.latitude + "\n" + crd7.longitude
                         model.myQmlSlot7()
 
-                        console.log("crd8")
-                        var crd8 = map.toCoordinate(Qt.point(360, 600))
                         model.sendLatitude(crd8.latitude)
                         model.sendLongitude(crd8.longitude)
                         here8.text = crd8.latitude + "\n" + crd8.longitude
                         model.myQmlSlot8()
 
-                        console.log("crd9")
-                        var crd9 = map.toCoordinate(Qt.point(600, 600))
                         model.sendLatitude(crd9.latitude)
                         model.sendLongitude(crd9.longitude)
                         here9.text = crd9.latitude + "\n" + crd9.longitude
                         model.myQmlSlot9()
+                    }break;
+                case Qt.Key_Right:
+                    map.center = QtPositioning.coordinate(map.center.latitude ,map.center.longitude + speed)
+                    if(map.zoomLevel > 11 || map.zoomLevel < 10)
+                    {
+                        latitudeE.text = (crd.latitude).toFixed(4)
+                        longitudeE.text = (crd.longitude).toFixed(4)
+                        model.sendLatitude(crd.latitude)
+                        model.sendLongitude(crd.longitude)
+                        model.myQmlSlot5()
                     }
+                    if(map.zoomLevel >= 10 && map.zoomLevel <= 11)
+                    {
+                        model.sendLatitude(crd1.latitude)
+                        model.sendLongitude(crd1.longitude)
+                        here1.text = crd1.latitude + "\n" + crd1.longitude
+                        model.myQmlSlot1()
+
+                        model.sendLatitude(crd2.latitude)
+                        model.sendLongitude(crd2.longitude)
+                        here2.text = crd2.latitude + "\n" + crd2.longitude
+                        model.myQmlSlot2()
+
+                        model.sendLatitude(crd3.latitude)
+                        model.sendLongitude(crd3.longitude)
+                        here3.text = crd3.latitude + "\n" + crd3.longitude
+                        model.myQmlSlot3()
+
+                        model.sendLatitude(crd4.latitude)
+                        model.sendLongitude(crd4.longitude)
+                        here4.text = crd4.latitude + "\n" + crd4.longitude
+                        model.myQmlSlot4()
+
+                        model.sendLatitude(crd5.latitude)
+                        model.sendLongitude(crd5.longitude)
+                        here5.text = crd5.latitude + "\n" + crd5.longitude
+                        model.myQmlSlot5()
+
+                        model.sendLatitude(crd6.latitude)
+                        model.sendLongitude(crd6.longitude)
+                        here6.text = crd6.latitude + "\n" + crd6.longitude
+                        model.myQmlSlot6()
+
+                        model.sendLatitude(crd7.latitude)
+                        model.sendLongitude(crd7.longitude)
+                        here7.text = crd7.latitude + "\n" + crd7.longitude
+                        model.myQmlSlot7()
+
+                        model.sendLatitude(crd8.latitude)
+                        model.sendLongitude(crd8.longitude)
+                        here8.text = crd8.latitude + "\n" + crd8.longitude
+                        model.myQmlSlot8()
+
+                        model.sendLatitude(crd9.latitude)
+                        model.sendLongitude(crd9.longitude)
+                        here9.text = crd9.latitude + "\n" + crd9.longitude
+                        model.myQmlSlot9()
+                    }break;
+                case Qt.Key_Up:
+                    map.center = QtPositioning.coordinate(map.center.latitude + speed ,map.center.longitude)
+                    if(map.zoomLevel > 11 || map.zoomLevel < 10)
+                    {
+                        latitudeE.text = (crd.latitude).toFixed(4)
+                        longitudeE.text = (crd.longitude).toFixed(4)
+                        model.sendLatitude(crd.latitude)
+                        model.sendLongitude(crd.longitude)
+                        model.myQmlSlot5()
+                    }
+                    if(map.zoomLevel >= 10 && map.zoomLevel <= 11)
+                    {
+                        model.sendLatitude(crd1.latitude)
+                        model.sendLongitude(crd1.longitude)
+                        here1.text = crd1.latitude + "\n" + crd1.longitude
+                        model.myQmlSlot1()
+
+                        model.sendLatitude(crd2.latitude)
+                        model.sendLongitude(crd2.longitude)
+                        here2.text = crd2.latitude + "\n" + crd2.longitude
+                        model.myQmlSlot2()
+
+                        model.sendLatitude(crd3.latitude)
+                        model.sendLongitude(crd3.longitude)
+                        here3.text = crd3.latitude + "\n" + crd3.longitude
+                        model.myQmlSlot3()
+
+                        model.sendLatitude(crd4.latitude)
+                        model.sendLongitude(crd4.longitude)
+                        here4.text = crd4.latitude + "\n" + crd4.longitude
+                        model.myQmlSlot4()
+
+                        model.sendLatitude(crd5.latitude)
+                        model.sendLongitude(crd5.longitude)
+                        here5.text = crd5.latitude + "\n" + crd5.longitude
+                        model.myQmlSlot5()
+
+                        model.sendLatitude(crd6.latitude)
+                        model.sendLongitude(crd6.longitude)
+                        here6.text = crd6.latitude + "\n" + crd6.longitude
+                        model.myQmlSlot6()
+
+                        model.sendLatitude(crd7.latitude)
+                        model.sendLongitude(crd7.longitude)
+                        here7.text = crd7.latitude + "\n" + crd7.longitude
+                        model.myQmlSlot7()
+
+                        model.sendLatitude(crd8.latitude)
+                        model.sendLongitude(crd8.longitude)
+                        here8.text = crd8.latitude + "\n" + crd8.longitude
+                        model.myQmlSlot8()
+
+                        model.sendLatitude(crd9.latitude)
+                        model.sendLongitude(crd9.longitude)
+                        here9.text = crd9.latitude + "\n" + crd9.longitude
+                        model.myQmlSlot9()
+                    }break;
+                case Qt.Key_Down:
+                    map.center = QtPositioning.coordinate(map.center.latitude - speed ,map.center.longitude)
+                    if(map.zoomLevel > 11 || map.zoomLevel < 10)
+                    {
+                        latitudeE.text = (crd.latitude).toFixed(4)
+                        longitudeE.text = (crd.longitude).toFixed(4)
+                        model.sendLatitude(crd.latitude)
+                        model.sendLongitude(crd.longitude)
+                        model.myQmlSlot5()
+                    }
+                    if(map.zoomLevel >= 10 && map.zoomLevel <= 11)
+                    {
+                        model.sendLatitude(crd1.latitude)
+                        model.sendLongitude(crd1.longitude)
+                        here1.text = crd1.latitude + "\n" + crd1.longitude
+                        model.myQmlSlot1()
+
+                        model.sendLatitude(crd2.latitude)
+                        model.sendLongitude(crd2.longitude)
+                        here2.text = crd2.latitude + "\n" + crd2.longitude
+                        model.myQmlSlot2()
+
+                        model.sendLatitude(crd3.latitude)
+                        model.sendLongitude(crd3.longitude)
+                        here3.text = crd3.latitude + "\n" + crd3.longitude
+                        model.myQmlSlot3()
+
+                        model.sendLatitude(crd4.latitude)
+                        model.sendLongitude(crd4.longitude)
+                        here4.text = crd4.latitude + "\n" + crd4.longitude
+                        model.myQmlSlot4()
+
+                        model.sendLatitude(crd5.latitude)
+                        model.sendLongitude(crd5.longitude)
+                        here5.text = crd5.latitude + "\n" + crd5.longitude
+                        model.myQmlSlot5()
+
+                        model.sendLatitude(crd6.latitude)
+                        model.sendLongitude(crd6.longitude)
+                        here6.text = crd6.latitude + "\n" + crd6.longitude
+                        model.myQmlSlot6()
+
+                        model.sendLatitude(crd7.latitude)
+                        model.sendLongitude(crd7.longitude)
+                        here7.text = crd7.latitude + "\n" + crd7.longitude
+                        model.myQmlSlot7()
+
+                        model.sendLatitude(crd8.latitude)
+                        model.sendLongitude(crd8.longitude)
+                        here8.text = crd8.latitude + "\n" + crd8.longitude
+                        model.myQmlSlot8()
+
+                        model.sendLatitude(crd9.latitude)
+                        model.sendLongitude(crd9.longitude)
+                        here9.text = crd9.latitude + "\n" + crd9.longitude
+                        model.myQmlSlot9()
+                    }break;
                 }
             }
         }

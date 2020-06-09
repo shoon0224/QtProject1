@@ -700,7 +700,6 @@ bool AppModel::ready() const
 
 double AppModel::sendLatitude(double lat) //qml에서 경도값을 받아오는 set함수
 {
-    qCDebug(requestsLog)<<"sendLatitude";
     d->coord.setLatitude(lat);
     return lat;
 }

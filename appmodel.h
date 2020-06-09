@@ -164,7 +164,9 @@ private slots:
     void queryWeather7();
     void queryWeather8();
     void queryWeather9();
+
     void networkSessionOpened();
+
     void handleWeatherNetworkData1(QNetworkReply *networkReply);
     void handleWeatherNetworkData2(QNetworkReply *networkReply);
     void handleWeatherNetworkData3(QNetworkReply *networkReply);
