@@ -67,8 +67,6 @@ Item {
         width: current.smallSide
         height: current.smallSide
         opacity: 1
-
-
     }
 
     Text {
@@ -86,10 +84,9 @@ Item {
         font.pointSize: 10
         wrapMode: Text.WordWrap
         width: parent.width
-        horizontalAlignment: Text.AlignRight
+        horizontalAlignment: Text.AlignHCenter
         anchors {
             top: temp.bottom
         }
     }
-
 }

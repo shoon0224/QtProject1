@@ -56,44 +56,35 @@
 #include <QtNetwork/QNetworkReply>
 #include <QtQml/QQmlListProperty>
 #include <QQuickView>
-
 #include <QtPositioning/QGeoPositionInfoSource>
 
-//! [0]
 class WeatherData : public QObject {
     Q_OBJECT
-    Q_PROPERTY(QString dayOfWeek READ dayOfWeek WRITE setDayOfWeek NOTIFY dataChanged)
     Q_PROPERTY(QString weatherIcon READ weatherIcon WRITE setWeatherIcon NOTIFY dataChanged)
     Q_PROPERTY(QString weatherDescription READ weatherDescription WRITE setWeatherDescription NOTIFY dataChanged)
     Q_PROPERTY(QString temperature READ temperature WRITE setTemperature NOTIFY dataChanged)
-    //Q_PROPERTY(type name READ name WRITE setname NOTIFY nameChanged)
-    //타입(type)과 읽을 때 함수(READ), 수정 시 함수(WRITE), 변경 시 호출할 시그널(NOTIFY) 작성
 
 public:
     explicit WeatherData(QObject *parent = 0);
     WeatherData(const WeatherData &other);
 
-    QString dayOfWeek() const;
     QString weatherIcon() const;
     QString weatherDescription() const;
     QString temperature() const;
 
-    void setDayOfWeek(const QString &value);
     void setWeatherIcon(const QString &value);
     void setWeatherDescription(const QString &value);
     void setTemperature(const QString &value);
 
 signals:
     void dataChanged();
-    //! [0]
 private:
-    QString m_dayOfWeek;
     QString m_weather;
     QString m_weatherDescription;
     QString m_temperature;
-    //! [1]
+
 };
-//! [1]
+
 
 Q_DECLARE_METATYPE(WeatherData)
 
@@ -103,9 +94,6 @@ class AppModel : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(bool ready READ ready NOTIFY readyChanged)
-    Q_PROPERTY(bool hasSource READ hasSource NOTIFY readyChanged)
-
-    //    Q_PROPERTY(bool hasValidCity READ hasValidCity NOTIFY cityChanged)
     Q_PROPERTY(bool hasValidWeather READ hasValidWeather NOTIFY weatherChanged)
     Q_PROPERTY(bool hasValidWeather1 READ hasValidWeather1 NOTIFY weatherChanged)
     Q_PROPERTY(bool hasValidWeather2 READ hasValidWeather2 NOTIFY weatherChanged)
@@ -116,7 +104,6 @@ class AppModel : public QObject
     Q_PROPERTY(bool hasValidWeather7 READ hasValidWeather7 NOTIFY weatherChanged)
     Q_PROPERTY(bool hasValidWeather8 READ hasValidWeather8 NOTIFY weatherChanged)
     Q_PROPERTY(bool hasValidWeather9 READ hasValidWeather9 NOTIFY weatherChanged)
-
     Q_PROPERTY(WeatherData *weather READ weather NOTIFY weatherChanged)
     Q_PROPERTY(WeatherData *weather1 READ weather1 NOTIFY weatherChanged)
     Q_PROPERTY(WeatherData *weather2 READ weather2 NOTIFY weatherChanged)
@@ -128,16 +115,10 @@ class AppModel : public QObject
     Q_PROPERTY(WeatherData *weather8 READ weather8 NOTIFY weatherChanged)
     Q_PROPERTY(WeatherData *weather9 READ weather9 NOTIFY weatherChanged)
 
-
-
-
-
 public:
     explicit AppModel(QObject *pardnt = 0); //explicit 자신이 원하지 않은 형변환이 일어나지 않도록 제한하는 키워드
     ~AppModel();
     bool ready() const;
-    bool hasSource() const;
-    //    bool hasValidCity() const; 도시값없으면 날씨 못불러오게 할려고 만들어놨던 함수
     bool hasValidWeather() const;
     bool hasValidWeather1() const;
     bool hasValidWeather2() const;
@@ -160,58 +141,51 @@ public:
     WeatherData *weather8() const;
     WeatherData *weather9() const;
 
-
 public slots:
-    double sendLatitude(double lat);//추가
-    double sendLongitude(double lon);//추가
-    double sendLatitude1(double lat);//추가
-    double sendLongitude1(double lon);//추가
-    double sendLatitude2(double lat);//추가
-    double sendLongitude2(double lon);//추가
-    double sendLatitude3(double lat);//추가
-    double sendLongitude3(double lon);//추가
-    double sendLatitude4(double lat);//추가
-    double sendLongitude4(double lon);//추가
-    double sendLatitude5(double lat);//추가
-    double sendLongitude5(double lon);//추가
-    double sendLatitude6(double lat);//추가
-    double sendLongitude6(double lon);//추가
-    double sendLatitude7(double lat);//추가
-    double sendLongitude7(double lon);//추가
-    double sendLatitude8(double lat);//추가
-    double sendLongitude8(double lon);//추가
-    double sendLatitude9(double lat);//추가
-    double sendLongitude9(double lon);//추가
-    double sendZoomLevel(double lev);
+    double sendLatitude(double lat);
+    double sendLongitude(double lon);
+    void myQmlSlot1();
+    void myQmlSlot2();
+    void myQmlSlot3();
+    void myQmlSlot4();
+    void myQmlSlot5();
+    void myQmlSlot6();
+    void myQmlSlot7();
+    void myQmlSlot8();
+    void myQmlSlot9();
 
-    void myQmlSlot();//추가
-
-
-
-
-    //! [2]
 private slots:
-    void queryWeather();
+    void queryWeather1();
+    void queryWeather2();
+    void queryWeather3();
+    void queryWeather4();
+    void queryWeather5();
+    void queryWeather6();
+    void queryWeather7();
+    void queryWeather8();
+    void queryWeather9();
     void networkSessionOpened();
-    void positionUpdated(QGeoPositionInfo gpsPos);
-    void handleWeatherNetworkData(QNetworkReply *networkReply);
+    void handleWeatherNetworkData1(QNetworkReply *networkReply);
+    void handleWeatherNetworkData2(QNetworkReply *networkReply);
+    void handleWeatherNetworkData3(QNetworkReply *networkReply);
+    void handleWeatherNetworkData4(QNetworkReply *networkReply);
+    void handleWeatherNetworkData5(QNetworkReply *networkReply);
+    void handleWeatherNetworkData6(QNetworkReply *networkReply);
+    void handleWeatherNetworkData7(QNetworkReply *networkReply);
+    void handleWeatherNetworkData8(QNetworkReply *networkReply);
+    void handleWeatherNetworkData9(QNetworkReply *networkReply);
 
 
 
-    //! [3]
 signals:
     void readyChanged();
     void weatherChanged();
 
 
-
-    //! [3]
-
 private:
     AppModelPrivate *d;
 
-    //! [4]
 };
-//! [4]
+
 
 #endif // APPMODEL_H
