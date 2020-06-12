@@ -91,12 +91,12 @@ static QString niceTemperatureString(double t)
 
 QString WeatherData::weatherIcon() const
 {
-        return m_weather;
+    return m_weather;
 }
 
 QString WeatherData::weatherDescription() const
 {
-        return m_weatherDescription;
+    return m_weatherDescription;
 }
 
 QString WeatherData::temperature() const
@@ -110,7 +110,7 @@ void WeatherData::setWeatherIcon(const QString &value)
 {
 
 
-        m_weather = value;
+    m_weather = value;
     emit dataChanged();
 }
 
@@ -127,6 +127,8 @@ void WeatherData::setTemperature(const QString &value)
     m_temperature = value;
     emit dataChanged();
 }
+
+
 
 
 class AppModelPrivate
@@ -149,6 +151,7 @@ public:
     WeatherData now9;
 
     bool ready;
+    bool tf;
     QElapsedTimer throttle;
     int nErrors;
     int minMsBeforeNewRequest;
@@ -162,7 +165,6 @@ public:
         ns(NULL),
 
         ready(false),
-
         nErrors(0),
         minMsBeforeNewRequest(baseMsBeforeNewRequest)
     {
@@ -260,6 +262,7 @@ void AppModel::queryWeather4()
 }
 void AppModel::queryWeather5()
 {
+
     d->latitude.setNum(d->coord.latitude());
     d->longitude.setNum(d->coord.longitude());
     QUrl url("http://api.openweathermap.org/data/2.5/weather?");
@@ -341,16 +344,16 @@ void AppModel::handleWeatherNetworkData1(QNetworkReply *networkReply)
             QJsonObject tempObject;
             QJsonValue valWeather;
             QJsonValue valMain;
-                valWeather = obj.value(QStringLiteral("weather"));
-                QJsonArray weatherArray = valWeather.toArray();
-                valWeather = weatherArray.at(0);
-                tempObject = valWeather.toObject();
-                d->now1.setWeatherDescription(tempObject.value(QStringLiteral("description")).toString());
-                d->now1.setWeatherIcon(tempObject.value("icon").toString());
-                valMain = obj.value(QStringLiteral("main"));
-                tempObject = valMain.toObject();
-                valMain = tempObject.value(QStringLiteral("temp"));
-                d->now1.setTemperature(niceTemperatureString(valMain.toDouble()));
+            valWeather = obj.value(QStringLiteral("weather"));
+            QJsonArray weatherArray = valWeather.toArray();
+            valWeather = weatherArray.at(0);
+            tempObject = valWeather.toObject();
+            d->now1.setWeatherDescription(tempObject.value(QStringLiteral("description")).toString());
+            d->now1.setWeatherIcon(tempObject.value("icon").toString());
+            valMain = obj.value(QStringLiteral("main"));
+            tempObject = valMain.toObject();
+            valMain = tempObject.value(QStringLiteral("temp"));
+            d->now1.setTemperature(niceTemperatureString(valMain.toDouble()));
         }
         if (!(d->ready)) {
             d->ready = true;
@@ -372,16 +375,16 @@ void AppModel::handleWeatherNetworkData2(QNetworkReply *networkReply)
             QJsonObject tempObject;
             QJsonValue valWeather;
             QJsonValue valMain;
-                valWeather = obj.value(QStringLiteral("weather"));
-                QJsonArray weatherArray = valWeather.toArray();
-                valWeather = weatherArray.at(0);
-                tempObject = valWeather.toObject();
-                d->now2.setWeatherDescription(tempObject.value(QStringLiteral("description")).toString());
-                d->now2.setWeatherIcon(tempObject.value("icon").toString());
-                valMain = obj.value(QStringLiteral("main"));
-                tempObject = valMain.toObject();
-                valMain = tempObject.value(QStringLiteral("temp"));
-                d->now2.setTemperature(niceTemperatureString(valMain.toDouble()));
+            valWeather = obj.value(QStringLiteral("weather"));
+            QJsonArray weatherArray = valWeather.toArray();
+            valWeather = weatherArray.at(0);
+            tempObject = valWeather.toObject();
+            d->now2.setWeatherDescription(tempObject.value(QStringLiteral("description")).toString());
+            d->now2.setWeatherIcon(tempObject.value("icon").toString());
+            valMain = obj.value(QStringLiteral("main"));
+            tempObject = valMain.toObject();
+            valMain = tempObject.value(QStringLiteral("temp"));
+            d->now2.setTemperature(niceTemperatureString(valMain.toDouble()));
         }
         if (!(d->ready)) {
             d->ready = true;
@@ -403,16 +406,16 @@ void AppModel::handleWeatherNetworkData3(QNetworkReply *networkReply)
             QJsonObject tempObject;
             QJsonValue valWeather;
             QJsonValue valMain;
-                valWeather = obj.value(QStringLiteral("weather"));
-                QJsonArray weatherArray = valWeather.toArray();
-                valWeather = weatherArray.at(0);
-                tempObject = valWeather.toObject();
-                d->now3.setWeatherDescription(tempObject.value(QStringLiteral("description")).toString());
-                d->now3.setWeatherIcon(tempObject.value("icon").toString());
-                valMain = obj.value(QStringLiteral("main"));
-                tempObject = valMain.toObject();
-                valMain = tempObject.value(QStringLiteral("temp"));
-                d->now3.setTemperature(niceTemperatureString(valMain.toDouble()));
+            valWeather = obj.value(QStringLiteral("weather"));
+            QJsonArray weatherArray = valWeather.toArray();
+            valWeather = weatherArray.at(0);
+            tempObject = valWeather.toObject();
+            d->now3.setWeatherDescription(tempObject.value(QStringLiteral("description")).toString());
+            d->now3.setWeatherIcon(tempObject.value("icon").toString());
+            valMain = obj.value(QStringLiteral("main"));
+            tempObject = valMain.toObject();
+            valMain = tempObject.value(QStringLiteral("temp"));
+            d->now3.setTemperature(niceTemperatureString(valMain.toDouble()));
         }
         if (!(d->ready)) {
             d->ready = true;
@@ -434,16 +437,16 @@ void AppModel::handleWeatherNetworkData4(QNetworkReply *networkReply)
             QJsonObject tempObject;
             QJsonValue valWeather;
             QJsonValue valMain;
-                valWeather = obj.value(QStringLiteral("weather"));
-                QJsonArray weatherArray = valWeather.toArray();
-                valWeather = weatherArray.at(0);
-                tempObject = valWeather.toObject();
-                d->now4.setWeatherDescription(tempObject.value(QStringLiteral("description")).toString());
-                d->now4.setWeatherIcon(tempObject.value("icon").toString());
-                valMain = obj.value(QStringLiteral("main"));
-                tempObject = valMain.toObject();
-                valMain = tempObject.value(QStringLiteral("temp"));
-                d->now4.setTemperature(niceTemperatureString(valMain.toDouble()));
+            valWeather = obj.value(QStringLiteral("weather"));
+            QJsonArray weatherArray = valWeather.toArray();
+            valWeather = weatherArray.at(0);
+            tempObject = valWeather.toObject();
+            d->now4.setWeatherDescription(tempObject.value(QStringLiteral("description")).toString());
+            d->now4.setWeatherIcon(tempObject.value("icon").toString());
+            valMain = obj.value(QStringLiteral("main"));
+            tempObject = valMain.toObject();
+            valMain = tempObject.value(QStringLiteral("temp"));
+            d->now4.setTemperature(niceTemperatureString(valMain.toDouble()));
         }
         if (!(d->ready)) {
             d->ready = true;
@@ -465,16 +468,16 @@ void AppModel::handleWeatherNetworkData5(QNetworkReply *networkReply)
             QJsonObject tempObject;
             QJsonValue valWeather;
             QJsonValue valMain;
-                valWeather = obj.value(QStringLiteral("weather"));
-                QJsonArray weatherArray = valWeather.toArray();
-                valWeather = weatherArray.at(0);
-                tempObject = valWeather.toObject();
-                d->now5.setWeatherDescription(tempObject.value(QStringLiteral("description")).toString());
-                d->now5.setWeatherIcon(tempObject.value("icon").toString());
-                valMain = obj.value(QStringLiteral("main"));
-                tempObject = valMain.toObject();
-                valMain = tempObject.value(QStringLiteral("temp"));
-                d->now5.setTemperature(niceTemperatureString(valMain.toDouble()));
+            valWeather = obj.value(QStringLiteral("weather"));
+            QJsonArray weatherArray = valWeather.toArray();
+            valWeather = weatherArray.at(0);
+            tempObject = valWeather.toObject();
+            d->now5.setWeatherDescription(tempObject.value(QStringLiteral("description")).toString());
+            d->now5.setWeatherIcon(tempObject.value("icon").toString());
+            valMain = obj.value(QStringLiteral("main"));
+            tempObject = valMain.toObject();
+            valMain = tempObject.value(QStringLiteral("temp"));
+            d->now5.setTemperature(niceTemperatureString(valMain.toDouble()));
         }
         if (!(d->ready)) {
             d->ready = true;
@@ -496,16 +499,16 @@ void AppModel::handleWeatherNetworkData6(QNetworkReply *networkReply)
             QJsonObject tempObject;
             QJsonValue valWeather;
             QJsonValue valMain;
-                valWeather = obj.value(QStringLiteral("weather"));
-                QJsonArray weatherArray = valWeather.toArray();
-                valWeather = weatherArray.at(0);
-                tempObject = valWeather.toObject();
-                d->now6.setWeatherDescription(tempObject.value(QStringLiteral("description")).toString());
-                d->now6.setWeatherIcon(tempObject.value("icon").toString());
-                valMain = obj.value(QStringLiteral("main"));
-                tempObject = valMain.toObject();
-                valMain = tempObject.value(QStringLiteral("temp"));
-                d->now6.setTemperature(niceTemperatureString(valMain.toDouble()));
+            valWeather = obj.value(QStringLiteral("weather"));
+            QJsonArray weatherArray = valWeather.toArray();
+            valWeather = weatherArray.at(0);
+            tempObject = valWeather.toObject();
+            d->now6.setWeatherDescription(tempObject.value(QStringLiteral("description")).toString());
+            d->now6.setWeatherIcon(tempObject.value("icon").toString());
+            valMain = obj.value(QStringLiteral("main"));
+            tempObject = valMain.toObject();
+            valMain = tempObject.value(QStringLiteral("temp"));
+            d->now6.setTemperature(niceTemperatureString(valMain.toDouble()));
         }
         if (!(d->ready)) {
             d->ready = true;
@@ -527,16 +530,16 @@ void AppModel::handleWeatherNetworkData7(QNetworkReply *networkReply)
             QJsonObject tempObject;
             QJsonValue valWeather;
             QJsonValue valMain;
-                valWeather = obj.value(QStringLiteral("weather"));
-                QJsonArray weatherArray = valWeather.toArray();
-                valWeather = weatherArray.at(0);
-                tempObject = valWeather.toObject();
-                d->now7.setWeatherDescription(tempObject.value(QStringLiteral("description")).toString());
-                d->now7.setWeatherIcon(tempObject.value("icon").toString());
-                valMain = obj.value(QStringLiteral("main"));
-                tempObject = valMain.toObject();
-                valMain = tempObject.value(QStringLiteral("temp"));
-                d->now7.setTemperature(niceTemperatureString(valMain.toDouble()));
+            valWeather = obj.value(QStringLiteral("weather"));
+            QJsonArray weatherArray = valWeather.toArray();
+            valWeather = weatherArray.at(0);
+            tempObject = valWeather.toObject();
+            d->now7.setWeatherDescription(tempObject.value(QStringLiteral("description")).toString());
+            d->now7.setWeatherIcon(tempObject.value("icon").toString());
+            valMain = obj.value(QStringLiteral("main"));
+            tempObject = valMain.toObject();
+            valMain = tempObject.value(QStringLiteral("temp"));
+            d->now7.setTemperature(niceTemperatureString(valMain.toDouble()));
         }
         if (!(d->ready)) {
             d->ready = true;
@@ -558,16 +561,16 @@ void AppModel::handleWeatherNetworkData8(QNetworkReply *networkReply)
             QJsonObject tempObject;
             QJsonValue valWeather;
             QJsonValue valMain;
-                valWeather = obj.value(QStringLiteral("weather"));
-                QJsonArray weatherArray = valWeather.toArray();
-                valWeather = weatherArray.at(0);
-                tempObject = valWeather.toObject();
-                d->now8.setWeatherDescription(tempObject.value(QStringLiteral("description")).toString());
-                d->now8.setWeatherIcon(tempObject.value("icon").toString());
-                valMain = obj.value(QStringLiteral("main"));
-                tempObject = valMain.toObject();
-                valMain = tempObject.value(QStringLiteral("temp"));
-                d->now8.setTemperature(niceTemperatureString(valMain.toDouble()));
+            valWeather = obj.value(QStringLiteral("weather"));
+            QJsonArray weatherArray = valWeather.toArray();
+            valWeather = weatherArray.at(0);
+            tempObject = valWeather.toObject();
+            d->now8.setWeatherDescription(tempObject.value(QStringLiteral("description")).toString());
+            d->now8.setWeatherIcon(tempObject.value("icon").toString());
+            valMain = obj.value(QStringLiteral("main"));
+            tempObject = valMain.toObject();
+            valMain = tempObject.value(QStringLiteral("temp"));
+            d->now8.setTemperature(niceTemperatureString(valMain.toDouble()));
         }
         if (!(d->ready)) {
             d->ready = true;
@@ -589,16 +592,16 @@ void AppModel::handleWeatherNetworkData9(QNetworkReply *networkReply)
             QJsonObject tempObject;
             QJsonValue valWeather;
             QJsonValue valMain;
-                valWeather = obj.value(QStringLiteral("weather"));
-                QJsonArray weatherArray = valWeather.toArray();
-                valWeather = weatherArray.at(0);
-                tempObject = valWeather.toObject();
-                d->now9.setWeatherDescription(tempObject.value(QStringLiteral("description")).toString());
-                d->now9.setWeatherIcon(tempObject.value("icon").toString());
-                valMain = obj.value(QStringLiteral("main"));
-                tempObject = valMain.toObject();
-                valMain = tempObject.value(QStringLiteral("temp"));
-                d->now9.setTemperature(niceTemperatureString(valMain.toDouble()));
+            valWeather = obj.value(QStringLiteral("weather"));
+            QJsonArray weatherArray = valWeather.toArray();
+            valWeather = weatherArray.at(0);
+            tempObject = valWeather.toObject();
+            d->now9.setWeatherDescription(tempObject.value(QStringLiteral("description")).toString());
+            d->now9.setWeatherIcon(tempObject.value("icon").toString());
+            valMain = obj.value(QStringLiteral("main"));
+            tempObject = valMain.toObject();
+            valMain = tempObject.value(QStringLiteral("temp"));
+            d->now9.setTemperature(niceTemperatureString(valMain.toDouble()));
         }
         if (!(d->ready)) {
             d->ready = true;
@@ -632,7 +635,8 @@ bool AppModel::hasValidWeather4() const
 }
 bool AppModel::hasValidWeather5() const
 {
-    return (!(d->now5.weatherIcon().isEmpty()) && (d->now5.weatherIcon().size() > 1) && d->now5.weatherIcon() != "");
+    d->tf = (!(d->now5.weatherIcon().isEmpty()) && (d->now5.weatherIcon().size() > 1) && d->now5.weatherIcon() != "");
+    return d->tf;
 }
 bool AppModel::hasValidWeather6() const
 {
@@ -708,6 +712,7 @@ double AppModel::sendLongitude(double lon) //qml에서 위도값을 받아오는
     d->coord.setLongitude(lon);
     return lon;
 }
+
 
 
 void AppModel::myQmlSlot1()

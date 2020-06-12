@@ -12,8 +12,8 @@
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication app(argc, argv);
+    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     qmlRegisterType<WeatherData>("WeatherInfo", 1, 0, "WeatherData");
     qmlRegisterType<AppModel>("WeatherInfo", 1, 0, "AppModel");
     QQmlApplicationEngine engine;

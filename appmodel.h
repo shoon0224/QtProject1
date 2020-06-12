@@ -141,6 +141,7 @@ public:
     WeatherData *weather8() const;
     WeatherData *weather9() const;
 
+
 public slots:
     double sendLatitude(double lat);
     double sendLongitude(double lon);
