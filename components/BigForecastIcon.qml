@@ -58,16 +58,6 @@ Item {
     property string weatherIcon: "01d"
     property real smallSide: (current.width < current.height ? current.width : current.height)
 
-    Text {
-        text: current.topText
-        font.pointSize: 10
-        anchors {
-            top: current.top
-            left: current.left
-            topMargin: 5
-            leftMargin: 5
-        }
-    }
 
     WeatherIcon {
         weatherIcon: current.weatherIcon
@@ -76,6 +66,17 @@ Item {
         anchors.verticalCenterOffset: 1 //날씨 아이콘 수직정렬 값
         width: current.smallSide
         height: current.smallSide
+        opacity: 1
+    }
+
+    Text {
+        id: temp
+        text: current.topText
+        font.pointSize: 10
+        anchors {
+            horizontalCenter: parent.horizontalCenter
+            verticalCenter: parent.verticalCenter
+        }
     }
 
     Text {
@@ -83,11 +84,9 @@ Item {
         font.pointSize: 10
         wrapMode: Text.WordWrap
         width: parent.width
-        horizontalAlignment: Text.AlignRight
+        horizontalAlignment: Text.AlignHCenter
         anchors {
-            bottom: current.bottom
-            right: current.right
-            rightMargin: 5
+            top: temp.bottom
         }
     }
 }

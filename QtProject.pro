@@ -10,6 +10,7 @@ TEMPLATE = app
 #----------------------------------------------------------------------------------------------
 
 QT += core network positioning qml quick
+QT += widgets
 requires(qtConfig(bearermanagement))
 #프로젝트에 사용될 Qt의 모듈을 지정한다. default값은 core와 gui이다.
 #이는 QtGui 모듈을 포함한다는 의미

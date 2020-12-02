@@ -6,31 +6,16 @@
 #include <QtQml/QQmlContext>
 #include <QtQuick/QQuickItem>
 #include <QLoggingCategory>
-
 #include "appmodel.h"
+#include <QApplication>
 
 
 int main(int argc, char *argv[])
 {
+    QApplication app(argc, argv);
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-
-    /*==============================추가================================*/
-    QGuiApplication app(argc, argv);
     qmlRegisterType<WeatherData>("WeatherInfo", 1, 0, "WeatherData");
     qmlRegisterType<AppModel>("WeatherInfo", 1, 0, "AppModel");
-
-    qRegisterMetaType<WeatherData>();
-    const QString mainQmlApp = QStringLiteral("");
-    QQuickView view;
-    view.setSource(QUrl(mainQmlApp));
-    view.setResizeMode(QQuickView::SizeRootObjectToView);
-
-//    QObject::connect(view.engine(), SIGNAL(quit()), qApp, SLOT(quit()));
-//    view.setGeometry(QRect(100, 100, 360, 640));
-//    view.show(); 화면 두개뜸
-    /*=================================================================*/
-
-
     QQmlApplicationEngine engine;
     const QUrl url(QStringLiteral("qrc:/main.qml"));
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
@@ -39,6 +24,8 @@ int main(int argc, char *argv[])
             QCoreApplication::exit(-1);
     }, Qt::QueuedConnection);
     engine.load(url);
+
+    //main.cpp에서는 main.qml를 로드한다.
 
     return app.exec();
 }

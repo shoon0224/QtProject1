@@ -1,4 +1,4 @@
-  /****************************************************************************
+/****************************************************************************
 **
 ** Copyright (C) 2017 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
@@ -49,7 +49,6 @@
 ****************************************************************************/
 
 #include "appmodel.h"
-
 #include <qgeopositioninfosource.h>
 #include <qgeosatelliteinfosource.h>
 #include <qnmeapositioninfosource.h>
@@ -64,43 +63,32 @@
 #include <QUrlQuery>
 #include <QElapsedTimer>
 #include <QLoggingCategory>
-
-/*
- *This application uses http://openweathermap.org/api
- **/
+#include <qgeocoordinate.h>
+#include <QQmlApplicationEngine>
+#include <QMessageBox>
 
 #define ZERO_KELVIN 273.15
 
 Q_LOGGING_CATEGORY(requestsLog,"wapp.requests")
 
 WeatherData::WeatherData(QObject *parent) :
-        QObject(parent)
+    QObject(parent)
 {
 }
 
 WeatherData::WeatherData(const WeatherData &other) :
-        QObject(0),
-        m_dayOfWeek(other.m_dayOfWeek),
-        m_weather(other.m_weather),
-        m_weatherDescription(other.m_weatherDescription),
-        m_temperature(other.m_temperature)
+    QObject(0),
+    m_weather(other.m_weather),
+    m_weatherDescription(other.m_weatherDescription),
+    m_temperature(other.m_temperature)
 {
 }
 
-QString WeatherData::dayOfWeek() const
+static QString niceTemperatureString(double t)
 {
-    return m_dayOfWeek;
+    return QString::number(qRound(t-ZERO_KELVIN)) + QChar(0xB0);
 }
 
-/*!
- * The icon value is based on OpenWeatherMap.org icon set. For details
- * see http://bugs.openweathermap.org/projects/api/wiki/Weather_Condition_Codes
- *
- * e.g. 01d ->sunny day
- *
- * The icon string will be translated to
- * http://openweathermap.org/img/w/01d.png
- */
 QString WeatherData::weatherIcon() const
 {
     return m_weather;
@@ -116,64 +104,70 @@ QString WeatherData::temperature() const
     return m_temperature;
 }
 
-void WeatherData::setDayOfWeek(const QString &value)
-{
-    m_dayOfWeek = value;
-    emit dataChanged();
-}
+
 
 void WeatherData::setWeatherIcon(const QString &value)
 {
+
+
     m_weather = value;
     emit dataChanged();
 }
 
 void WeatherData::setWeatherDescription(const QString &value)
 {
+
     m_weatherDescription = value;
     emit dataChanged();
 }
 
 void WeatherData::setTemperature(const QString &value)
 {
+
     m_temperature = value;
     emit dataChanged();
 }
 
-class AppModelPrivate // 아래에 선언된 포인터변수 d로 참조되는 멤버들
+
+
+
+class AppModelPrivate
 {
 public:
-    static const int baseMsBeforeNewRequest = 5 * 1000; // 5 s, increased after each missing answer up to 10x
+    static const int baseMsBeforeNewRequest = 0; // 5 s, increased after each missing answer up to 10x
     QGeoPositionInfoSource *src;
     QGeoCoordinate coord;
     QString longitude, latitude;
-    QString city;
     QNetworkAccessManager *nam;
     QNetworkSession *ns;
-    WeatherData now;
-    QList<WeatherData*> forecast;
-    QQmlListProperty<WeatherData> *fcProp;
+    WeatherData now1;
+    WeatherData now2;
+    WeatherData now3;
+    WeatherData now4;
+    WeatherData now5;
+    WeatherData now6;
+    WeatherData now7;
+    WeatherData now8;
+    WeatherData now9;
+
     bool ready;
-    bool useGps; 
+    bool tf;
     QElapsedTimer throttle;
     int nErrors;
     int minMsBeforeNewRequest;
-    QTimer delayedCityRequestTimer;
     QTimer requestNewWeatherTimer;
+    QTimer delayedCityRequestTimer;
     QString app_ident;
 
     AppModelPrivate() :
-            src(NULL),
-            nam(NULL),
-            ns(NULL),
-            fcProp(NULL),
-            ready(false),
-            useGps(true),
-            nErrors(0),
-            minMsBeforeNewRequest(baseMsBeforeNewRequest)
+        src(NULL),
+        nam(NULL),
+        ns(NULL),
+
+        ready(false),
+        nErrors(0),
+        minMsBeforeNewRequest(baseMsBeforeNewRequest)
     {
-        delayedCityRequestTimer.setSingleShot(true);
-        delayedCityRequestTimer.setInterval(1000); // 1 s
         requestNewWeatherTimer.setSingleShot(false);
         requestNewWeatherTimer.setInterval(20*60*1000); // 20 min
         throttle.invalidate();
@@ -181,62 +175,18 @@ public:
     }
 };
 
-static void forecastAppend(QQmlListProperty<WeatherData> *prop, WeatherData *val)
+
+AppModel::AppModel(QObject *parent) : QObject(parent), d(new AppModelPrivate)
 {
-    Q_UNUSED(val);
-    Q_UNUSED(prop);
-}
-
-static WeatherData *forecastAt(QQmlListProperty<WeatherData> *prop, int index)
-{
-    AppModelPrivate *d = static_cast<AppModelPrivate*>(prop->data);
-    return d->forecast.at(index);
-}
-
-static int forecastCount(QQmlListProperty<WeatherData> *prop)
-{
-    AppModelPrivate *d = static_cast<AppModelPrivate*>(prop->data);
-    return d->forecast.size();
-}
-
-static void forecastClear(QQmlListProperty<WeatherData> *prop)
-{
-    static_cast<AppModelPrivate*>(prop->data)->forecast.clear();
-}
-
-//! [0]
-AppModel::AppModel(QObject *parent) :
-        QObject(parent),
-        d(new AppModelPrivate)
-{
-//! [0]
-    d->fcProp = new QQmlListProperty<WeatherData>(this, d,
-                                                          forecastAppend,
-                                                          forecastCount,
-                                                          forecastAt,
-                                                          forecastClear);
-
-    connect(&d->delayedCityRequestTimer, SIGNAL(timeout()),
-            this, SLOT(queryCity()));
-    connect(&d->requestNewWeatherTimer, SIGNAL(timeout()),
-            this, SLOT(refreshWeather()));
-    d->requestNewWeatherTimer.start();
-
-
-//! [1]
-    // make sure we have an active network session
     d->nam = new QNetworkAccessManager(this);
 
     QNetworkConfigurationManager ncm;
     d->ns = new QNetworkSession(ncm.defaultConfiguration(), this);
     connect(d->ns, SIGNAL(opened()), this, SLOT(networkSessionOpened()));
-    // the session may be already open. if it is, run the slot directly
     if (d->ns->isOpen())
         this->networkSessionOpened();
-    // tell the system we want network
     d->ns->open();
 }
-//! [1]
 
 AppModel::~AppModel()
 {
@@ -246,113 +196,149 @@ AppModel::~AppModel()
     delete d;
 }
 
-//! [2]
 void AppModel::networkSessionOpened()
 {
     d->src = QGeoPositionInfoSource::createDefaultSource(this);
-
     if (d->src) {
-        d->useGps = true;
-        connect(d->src, SIGNAL(positionUpdated(QGeoPositionInfo)),
-                this, SLOT(positionUpdated(QGeoPositionInfo)));
-        connect(d->src, SIGNAL(error(QGeoPositionInfoSource::Error)),
-                this, SLOT(positionError(QGeoPositionInfoSource::Error)));
         d->src->startUpdates();
-    } else {
-        d->useGps = false;
-        d->city = "busan";
-        emit cityChanged();
-        this->refreshWeather();
     }
 }
-//! [2]
 
-//! [3]
-void AppModel::positionUpdated(QGeoPositionInfo gpsPos)
+void AppModel::queryWeather1()
 {
-    d->coord = gpsPos.coordinate();
-
-    if (!(d->useGps))
-        return;
-
-    queryCity();
-}
-//! [3]
-
-void AppModel::queryCity() //헤더 파일에 선언된 AppModel의 멤버함수 쿼리시티가 여기에 실행코드가 선언되었다.
-{
-    //don't update more often then once a minute
-    //to keep load on server low
-    if (d->throttle.isValid() && d->throttle.elapsed() < d->minMsBeforeNewRequest ) {
-        qCDebug(requestsLog) << "delaying query of city";
-        if (!d->delayedCityRequestTimer.isActive())
-            d->delayedCityRequestTimer.start();
-        return;
-    }
-
-    qDebug(requestsLog) << "requested query of city";
-    d->throttle.start();
-    d->minMsBeforeNewRequest = (d->nErrors + 1) * d->baseMsBeforeNewRequest;
-
-    QString latitude, longitude; //Qstring 클래스의 객체 latitude, longitude 선언
-    longitude.setNum(d->coord.longitude()); //longitude의 setNum함수가 파라미터 값으로 AppModelPrivate클래스의 coord객체가 longitude()함수를 호출한다??
-    latitude.setNum(d->coord.latitude());
-
-    /* latitude() 함수의 경로를 따라가보면 함수뒤에 const가 붙은 구문이 있는데 이건 이 함수 안에서는 어떤 변수도 바꿀 수 없음을 뜻한다. */
-    /* 함수가 클래스 멤버인 경우에만 const 키워드를 함수 뒤에 삽입 할 수 있으며 해당 함수가 속한 객체의 멤버 변수를 변경 할 수 없다는 뜻이다.*/
-    /* 또한 const가 붙은 함수 내에서는 const가 붙은 다른 함수를 제외한 일반 함수는 호출하지 못한다.*/
-
+    d->latitude.setNum(d->coord.latitude());
+    d->longitude.setNum(d->coord.longitude());
     QUrl url("http://api.openweathermap.org/data/2.5/weather?");
     QUrlQuery query;
-    query.addQueryItem("lat", latitude); // key="lat", value=latitude
-    query.addQueryItem("lon", longitude);
+    query.addQueryItem("lat", d->latitude);
+    query.addQueryItem("lon", d->longitude);
     query.addQueryItem("mode", "json");
     query.addQueryItem("APPID", d->app_ident);
     url.setQuery(query);
-    qCDebug(requestsLog) << "submitting request";
-
     QNetworkReply *rep = d->nam->get(QNetworkRequest(url));
-    // connect up the signal right away
-    connect(rep, &QNetworkReply::finished,
-            this, [this, rep]() { handleGeoNetworkData(rep); });
+    connect(rep, &QNetworkReply::finished, this, [this, rep]() {  handleWeatherNetworkData1(rep); });
+}
+void AppModel::queryWeather2()
+{
+    d->latitude.setNum(d->coord.latitude());
+    d->longitude.setNum(d->coord.longitude());
+    QUrl url("http://api.openweathermap.org/data/2.5/weather?");
+    QUrlQuery query;
+    query.addQueryItem("lat", d->latitude);
+    query.addQueryItem("lon", d->longitude);
+    query.addQueryItem("mode", "json");
+    query.addQueryItem("APPID", d->app_ident);
+    url.setQuery(query);
+    QNetworkReply *rep = d->nam->get(QNetworkRequest(url));
+    connect(rep, &QNetworkReply::finished, this, [this, rep]() {  handleWeatherNetworkData2(rep); });
+}
+void AppModel::queryWeather3()
+{
+    d->latitude.setNum(d->coord.latitude());
+    d->longitude.setNum(d->coord.longitude());
+    QUrl url("http://api.openweathermap.org/data/2.5/weather?");
+    QUrlQuery query;
+    query.addQueryItem("lat", d->latitude);
+    query.addQueryItem("lon", d->longitude);
+    query.addQueryItem("mode", "json");
+    query.addQueryItem("APPID", d->app_ident);
+    url.setQuery(query);
+    QNetworkReply *rep = d->nam->get(QNetworkRequest(url));
+    connect(rep, &QNetworkReply::finished, this, [this, rep]() {  handleWeatherNetworkData3(rep); });
+}
+void AppModel::queryWeather4()
+{
+    d->latitude.setNum(d->coord.latitude());
+    d->longitude.setNum(d->coord.longitude());
+    QUrl url("http://api.openweathermap.org/data/2.5/weather?");
+    QUrlQuery query;
+    query.addQueryItem("lat", d->latitude);
+    query.addQueryItem("lon", d->longitude);
+    query.addQueryItem("mode", "json");
+    query.addQueryItem("APPID", d->app_ident);
+    url.setQuery(query);
+    QNetworkReply *rep = d->nam->get(QNetworkRequest(url));
+    connect(rep, &QNetworkReply::finished, this, [this, rep]() {  handleWeatherNetworkData4(rep); });
+}
+void AppModel::queryWeather5()
+{
 
+    d->latitude.setNum(d->coord.latitude());
+    d->longitude.setNum(d->coord.longitude());
+    QUrl url("http://api.openweathermap.org/data/2.5/weather?");
+    QUrlQuery query;
+    query.addQueryItem("lat", d->latitude);
+    query.addQueryItem("lon", d->longitude);
+    query.addQueryItem("mode", "json");
+    query.addQueryItem("APPID", d->app_ident);
+    url.setQuery(query);
+    QNetworkReply *rep = d->nam->get(QNetworkRequest(url));
+    connect(rep, &QNetworkReply::finished, this, [this, rep]() {  handleWeatherNetworkData5(rep); });
+}
+void AppModel::queryWeather6()
+{
+    d->latitude.setNum(d->coord.latitude());
+    d->longitude.setNum(d->coord.longitude());
+    QUrl url("http://api.openweathermap.org/data/2.5/weather?");
+    QUrlQuery query;
+    query.addQueryItem("lat", d->latitude);
+    query.addQueryItem("lon", d->longitude);
+    query.addQueryItem("mode", "json");
+    query.addQueryItem("APPID", d->app_ident);
+    url.setQuery(query);
+    QNetworkReply *rep = d->nam->get(QNetworkRequest(url));
+    connect(rep, &QNetworkReply::finished, this, [this, rep]() {  handleWeatherNetworkData6(rep); });
+}
+void AppModel::queryWeather7()
+{
+    d->latitude.setNum(d->coord.latitude());
+    d->longitude.setNum(d->coord.longitude());
+    QUrl url("http://api.openweathermap.org/data/2.5/weather?");
+    QUrlQuery query;
+    query.addQueryItem("lat", d->latitude);
+    query.addQueryItem("lon", d->longitude);
+    query.addQueryItem("mode", "json");
+    query.addQueryItem("APPID", d->app_ident);
+    url.setQuery(query);
+    QNetworkReply *rep = d->nam->get(QNetworkRequest(url));
+    connect(rep, &QNetworkReply::finished, this, [this, rep]() {  handleWeatherNetworkData7(rep); });
+}
+void AppModel::queryWeather8()
+{
+    d->latitude.setNum(d->coord.latitude());
+    d->longitude.setNum(d->coord.longitude());
+    QUrl url("http://api.openweathermap.org/data/2.5/weather?");
+    QUrlQuery query;
+    query.addQueryItem("lat", d->latitude);
+    query.addQueryItem("lon", d->longitude);
+    query.addQueryItem("mode", "json");
+    query.addQueryItem("APPID", d->app_ident);
+    url.setQuery(query);
+    QNetworkReply *rep = d->nam->get(QNetworkRequest(url));
+    connect(rep, &QNetworkReply::finished, this, [this, rep]() {  handleWeatherNetworkData8(rep); });
+}
+void AppModel::queryWeather9()
+{
+    d->latitude.setNum(d->coord.latitude());
+    d->longitude.setNum(d->coord.longitude());
+    QUrl url("http://api.openweathermap.org/data/2.5/weather?");
+    QUrlQuery query;
+    query.addQueryItem("lat", d->latitude);
+    query.addQueryItem("lon", d->longitude);
+    query.addQueryItem("mode", "json");
+    query.addQueryItem("APPID", d->app_ident);
+    url.setQuery(query);
+    QNetworkReply *rep = d->nam->get(QNetworkRequest(url));
+    connect(rep, &QNetworkReply::finished, this, [this, rep]() {  handleWeatherNetworkData9(rep); });
 }
 
-void AppModel::positionError(QGeoPositionInfoSource::Error e)
+void AppModel::handleWeatherNetworkData1(QNetworkReply *networkReply)
 {
-    Q_UNUSED(e);
-    qWarning() << "Position source error. Falling back to simulation mode.";
-    // cleanup insufficient QGeoPositionInfoSource instance
-    d->src->stopUpdates();
-    d->src->deleteLater();
-    d->src = 0;
-
-    // activate simulation mode
-    d->useGps = false;
-    d->city = "busan";
-    emit cityChanged();
-    this->refreshWeather();
-}
-
-void AppModel::hadError(bool tryAgain)
-{
-    qCDebug(requestsLog) << "hadError, will " << (tryAgain ? "" : "not ") << "rety";
-    d->throttle.start();
-    if (d->nErrors < 10)
-        ++d->nErrors;
-    d->minMsBeforeNewRequest = (d->nErrors + 1) * d->baseMsBeforeNewRequest;
-    if (tryAgain)
-        d->delayedCityRequestTimer.start();
-}
-
-void AppModel::handleGeoNetworkData(QNetworkReply *networkReply)
-{
-    if (!networkReply) {
-        hadError(false); // should retry?
+    if (!networkReply){
         return;
     }
-
     if (!networkReply->error()) {
+<<<<<<< HEAD
         d->nErrors = 0;
         if (!d->throttle.isValid()) // isValid 데이터가 유효하지 않은 경우 0, 그렇지 않은경우 1을 반환한다.
             d->throttle.start();//객체d의 쓰레드에게 작업지시
@@ -370,210 +356,418 @@ void AppModel::handleGeoNetworkData(QNetworkReply *networkReply)
             d->city = city;
             emit cityChanged();
             refreshWeather();
-        }
-    } else {
-        hadError(true);
-    }
-    networkReply->deleteLater();
-}
-
-void AppModel::refreshWeather()
-{
-    if (d->city.isEmpty()) {
-        qCDebug(requestsLog) << "refreshing weather skipped (no city)";
-        return;
-    }
-//    qCDebug(requestsLog) << "날씨 새로고침";
-    QUrl url("http://api.openweathermap.org/data/2.5/weather");
-    QUrlQuery query;
-
-    query.addQueryItem("q", d->city);
-    query.addQueryItem("mode", "json");
-    query.addQueryItem("APPID", d->app_ident);
-    url.setQuery(query);
-
-    QNetworkReply *rep = d->nam->get(QNetworkRequest(url));
-    // connect up the signal right away
-    connect(rep, &QNetworkReply::finished,
-            this, [this, rep]() { handleWeatherNetworkData(rep); });
-}
-
-static QString niceTemperatureString(double t)
-{
-    return QString::number(qRound(t-ZERO_KELVIN)) + QChar(0xB0);
-}
-
-void AppModel::handleWeatherNetworkData(QNetworkReply *networkReply)
-{
-//    qCDebug(requestsLog) << "got weather network data";
-    if (!networkReply)
-        return;
-
-    if (!networkReply->error()) {
-        foreach (WeatherData *inf, d->forecast)
-            delete inf;
-        d->forecast.clear();
-
+=======
         QJsonDocument document = QJsonDocument::fromJson(networkReply->readAll());
-
         if (document.isObject()) {
             QJsonObject obj = document.object();
             QJsonObject tempObject;
-            QJsonValue val;
-
-            if (obj.contains(QStringLiteral("weather"))) {
-                val = obj.value(QStringLiteral("weather"));
-                QJsonArray weatherArray = val.toArray();
-                val = weatherArray.at(0);
-                tempObject = val.toObject();
-                d->now.setWeatherDescription(tempObject.value(QStringLiteral("description")).toString());
-                d->now.setWeatherIcon(tempObject.value("icon").toString());
-            }
-            if (obj.contains(QStringLiteral("main"))) {
-                val = obj.value(QStringLiteral("main"));
-                tempObject = val.toObject();
-                val = tempObject.value(QStringLiteral("temp"));
-                d->now.setTemperature(niceTemperatureString(val.toDouble()));
-            }
+            QJsonValue valWeather;
+            QJsonValue valMain;
+            valWeather = obj.value(QStringLiteral("weather"));
+            QJsonArray weatherArray = valWeather.toArray();
+            valWeather = weatherArray.at(0);
+            tempObject = valWeather.toObject();
+            d->now1.setWeatherDescription(tempObject.value(QStringLiteral("description")).toString());
+            d->now1.setWeatherIcon(tempObject.value("icon").toString());
+            valMain = obj.value(QStringLiteral("main"));
+            tempObject = valMain.toObject();
+            valMain = tempObject.value(QStringLiteral("temp"));
+            d->now1.setTemperature(niceTemperatureString(valMain.toDouble()));
+>>>>>>> 1d499ecf10b889bd400b81246883aaea48502b37
         }
-    }
-    networkReply->deleteLater();
-
-    //retrieve the forecast
-    QUrl url("http://api.openweathermap.org/data/2.5/forecast/daily");
-    QUrlQuery query;
-
-    query.addQueryItem("q", d->city);
-    query.addQueryItem("mode", "json");
-    query.addQueryItem("cnt", "5");
-    query.addQueryItem("APPID", d->app_ident);
-    url.setQuery(query);
-
-    QNetworkReply *rep = d->nam->get(QNetworkRequest(url));
-    // connect up the signal right away
-    connect(rep, &QNetworkReply::finished,
-            this, [this, rep]() { handleForecastNetworkData(rep); });
-}
-
-void AppModel::handleForecastNetworkData(QNetworkReply *networkReply)
-{
-//    qCDebug(requestsLog) << "got forecast";
-    if (!networkReply)
-        return;
-
-    if (!networkReply->error()) {
-        QJsonDocument document = QJsonDocument::fromJson(networkReply->readAll());
-
-        QJsonObject jo;
-        QJsonValue jv;
-        QJsonObject root = document.object();
-        jv = root.value(QStringLiteral("list"));
-        if (!jv.isArray())
-            qWarning() << "Invalid forecast object";
-        QJsonArray ja = jv.toArray();
-        //we need 4 days of forecast -> first entry is today
-        if (ja.count() != 5)
-            qWarning() << "Invalid forecast object";
-
-        QString data;
-        for (int i = 1; i<ja.count(); i++) {
-            WeatherData *forecastEntry = new WeatherData();
-
-            //min/max temperature
-            QJsonObject subtree = ja.at(i).toObject();
-            jo = subtree.value(QStringLiteral("temp")).toObject();
-            jv = jo.value(QStringLiteral("min"));
-            data.clear();
-            data += niceTemperatureString(jv.toDouble());
-            data += QChar('/');
-            jv = jo.value(QStringLiteral("max"));
-            data += niceTemperatureString(jv.toDouble());
-            forecastEntry->setTemperature(data);
-
-            //get date
-            jv = subtree.value(QStringLiteral("dt"));
-            QDateTime dt = QDateTime::fromMSecsSinceEpoch((qint64)jv.toDouble()*1000);
-            forecastEntry->setDayOfWeek(dt.date().toString(QStringLiteral("ddd")));
-
-            //get icon
-            QJsonArray weatherArray = subtree.value(QStringLiteral("weather")).toArray();
-            jo = weatherArray.at(0).toObject();
-            forecastEntry->setWeatherIcon(jo.value(QStringLiteral("icon")).toString());
-
-            //get description
-            forecastEntry->setWeatherDescription(jo.value(QStringLiteral("description")).toString());
-
-            d->forecast.append(forecastEntry);
-        }
-
         if (!(d->ready)) {
             d->ready = true;
             emit readyChanged();
         }
-
+        emit weatherChanged();
+    }
+    networkReply->deleteLater();
+}
+void AppModel::handleWeatherNetworkData2(QNetworkReply *networkReply)
+{
+    if (!networkReply){
+        return;
+    }
+    if (!networkReply->error()) {
+        QJsonDocument document = QJsonDocument::fromJson(networkReply->readAll());
+        if (document.isObject()) {
+            QJsonObject obj = document.object();
+            QJsonObject tempObject;
+            QJsonValue valWeather;
+            QJsonValue valMain;
+            valWeather = obj.value(QStringLiteral("weather"));
+            QJsonArray weatherArray = valWeather.toArray();
+            valWeather = weatherArray.at(0);
+            tempObject = valWeather.toObject();
+            d->now2.setWeatherDescription(tempObject.value(QStringLiteral("description")).toString());
+            d->now2.setWeatherIcon(tempObject.value("icon").toString());
+            valMain = obj.value(QStringLiteral("main"));
+            tempObject = valMain.toObject();
+            valMain = tempObject.value(QStringLiteral("temp"));
+            d->now2.setTemperature(niceTemperatureString(valMain.toDouble()));
+        }
+        if (!(d->ready)) {
+            d->ready = true;
+            emit readyChanged();
+        }
+        emit weatherChanged();
+    }
+    networkReply->deleteLater();
+}
+void AppModel::handleWeatherNetworkData3(QNetworkReply *networkReply)
+{
+    if (!networkReply){
+        return;
+    }
+    if (!networkReply->error()) {
+        QJsonDocument document = QJsonDocument::fromJson(networkReply->readAll());
+        if (document.isObject()) {
+            QJsonObject obj = document.object();
+            QJsonObject tempObject;
+            QJsonValue valWeather;
+            QJsonValue valMain;
+            valWeather = obj.value(QStringLiteral("weather"));
+            QJsonArray weatherArray = valWeather.toArray();
+            valWeather = weatherArray.at(0);
+            tempObject = valWeather.toObject();
+            d->now3.setWeatherDescription(tempObject.value(QStringLiteral("description")).toString());
+            d->now3.setWeatherIcon(tempObject.value("icon").toString());
+            valMain = obj.value(QStringLiteral("main"));
+            tempObject = valMain.toObject();
+            valMain = tempObject.value(QStringLiteral("temp"));
+            d->now3.setTemperature(niceTemperatureString(valMain.toDouble()));
+        }
+        if (!(d->ready)) {
+            d->ready = true;
+            emit readyChanged();
+        }
+        emit weatherChanged();
+    }
+    networkReply->deleteLater();
+}
+void AppModel::handleWeatherNetworkData4(QNetworkReply *networkReply)
+{
+    if (!networkReply){
+        return;
+    }
+    if (!networkReply->error()) {
+        QJsonDocument document = QJsonDocument::fromJson(networkReply->readAll());
+        if (document.isObject()) {
+            QJsonObject obj = document.object();
+            QJsonObject tempObject;
+            QJsonValue valWeather;
+            QJsonValue valMain;
+            valWeather = obj.value(QStringLiteral("weather"));
+            QJsonArray weatherArray = valWeather.toArray();
+            valWeather = weatherArray.at(0);
+            tempObject = valWeather.toObject();
+            d->now4.setWeatherDescription(tempObject.value(QStringLiteral("description")).toString());
+            d->now4.setWeatherIcon(tempObject.value("icon").toString());
+            valMain = obj.value(QStringLiteral("main"));
+            tempObject = valMain.toObject();
+            valMain = tempObject.value(QStringLiteral("temp"));
+            d->now4.setTemperature(niceTemperatureString(valMain.toDouble()));
+        }
+        if (!(d->ready)) {
+            d->ready = true;
+            emit readyChanged();
+        }
+        emit weatherChanged();
+    }
+    networkReply->deleteLater();
+}
+void AppModel::handleWeatherNetworkData5(QNetworkReply *networkReply)
+{
+    if (!networkReply){
+        return;
+    }
+    if (!networkReply->error()) {
+        QJsonDocument document = QJsonDocument::fromJson(networkReply->readAll());
+        if (document.isObject()) {
+            QJsonObject obj = document.object();
+            QJsonObject tempObject;
+            QJsonValue valWeather;
+            QJsonValue valMain;
+            valWeather = obj.value(QStringLiteral("weather"));
+            QJsonArray weatherArray = valWeather.toArray();
+            valWeather = weatherArray.at(0);
+            tempObject = valWeather.toObject();
+            d->now5.setWeatherDescription(tempObject.value(QStringLiteral("description")).toString());
+            d->now5.setWeatherIcon(tempObject.value("icon").toString());
+            valMain = obj.value(QStringLiteral("main"));
+            tempObject = valMain.toObject();
+            valMain = tempObject.value(QStringLiteral("temp"));
+            d->now5.setTemperature(niceTemperatureString(valMain.toDouble()));
+        }
+        if (!(d->ready)) {
+            d->ready = true;
+            emit readyChanged();
+        }
+        emit weatherChanged();
+    }
+    networkReply->deleteLater();
+}
+void AppModel::handleWeatherNetworkData6(QNetworkReply *networkReply)
+{
+    if (!networkReply){
+        return;
+    }
+    if (!networkReply->error()) {
+        QJsonDocument document = QJsonDocument::fromJson(networkReply->readAll());
+        if (document.isObject()) {
+            QJsonObject obj = document.object();
+            QJsonObject tempObject;
+            QJsonValue valWeather;
+            QJsonValue valMain;
+            valWeather = obj.value(QStringLiteral("weather"));
+            QJsonArray weatherArray = valWeather.toArray();
+            valWeather = weatherArray.at(0);
+            tempObject = valWeather.toObject();
+            d->now6.setWeatherDescription(tempObject.value(QStringLiteral("description")).toString());
+            d->now6.setWeatherIcon(tempObject.value("icon").toString());
+            valMain = obj.value(QStringLiteral("main"));
+            tempObject = valMain.toObject();
+            valMain = tempObject.value(QStringLiteral("temp"));
+            d->now6.setTemperature(niceTemperatureString(valMain.toDouble()));
+        }
+        if (!(d->ready)) {
+            d->ready = true;
+            emit readyChanged();
+        }
+        emit weatherChanged();
+    }
+    networkReply->deleteLater();
+}
+void AppModel::handleWeatherNetworkData7(QNetworkReply *networkReply)
+{
+    if (!networkReply){
+        return;
+    }
+    if (!networkReply->error()) {
+        QJsonDocument document = QJsonDocument::fromJson(networkReply->readAll());
+        if (document.isObject()) {
+            QJsonObject obj = document.object();
+            QJsonObject tempObject;
+            QJsonValue valWeather;
+            QJsonValue valMain;
+            valWeather = obj.value(QStringLiteral("weather"));
+            QJsonArray weatherArray = valWeather.toArray();
+            valWeather = weatherArray.at(0);
+            tempObject = valWeather.toObject();
+            d->now7.setWeatherDescription(tempObject.value(QStringLiteral("description")).toString());
+            d->now7.setWeatherIcon(tempObject.value("icon").toString());
+            valMain = obj.value(QStringLiteral("main"));
+            tempObject = valMain.toObject();
+            valMain = tempObject.value(QStringLiteral("temp"));
+            d->now7.setTemperature(niceTemperatureString(valMain.toDouble()));
+        }
+        if (!(d->ready)) {
+            d->ready = true;
+            emit readyChanged();
+        }
+        emit weatherChanged();
+    }
+    networkReply->deleteLater();
+}
+void AppModel::handleWeatherNetworkData8(QNetworkReply *networkReply)
+{
+    if (!networkReply){
+        return;
+    }
+    if (!networkReply->error()) {
+        QJsonDocument document = QJsonDocument::fromJson(networkReply->readAll());
+        if (document.isObject()) {
+            QJsonObject obj = document.object();
+            QJsonObject tempObject;
+            QJsonValue valWeather;
+            QJsonValue valMain;
+            valWeather = obj.value(QStringLiteral("weather"));
+            QJsonArray weatherArray = valWeather.toArray();
+            valWeather = weatherArray.at(0);
+            tempObject = valWeather.toObject();
+            d->now8.setWeatherDescription(tempObject.value(QStringLiteral("description")).toString());
+            d->now8.setWeatherIcon(tempObject.value("icon").toString());
+            valMain = obj.value(QStringLiteral("main"));
+            tempObject = valMain.toObject();
+            valMain = tempObject.value(QStringLiteral("temp"));
+            d->now8.setTemperature(niceTemperatureString(valMain.toDouble()));
+        }
+        if (!(d->ready)) {
+            d->ready = true;
+            emit readyChanged();
+        }
+        emit weatherChanged();
+    }
+    networkReply->deleteLater();
+}
+void AppModel::handleWeatherNetworkData9(QNetworkReply *networkReply)
+{
+    if (!networkReply){
+        return;
+    }
+    if (!networkReply->error()) {
+        QJsonDocument document = QJsonDocument::fromJson(networkReply->readAll());
+        if (document.isObject()) {
+            QJsonObject obj = document.object();
+            QJsonObject tempObject;
+            QJsonValue valWeather;
+            QJsonValue valMain;
+            valWeather = obj.value(QStringLiteral("weather"));
+            QJsonArray weatherArray = valWeather.toArray();
+            valWeather = weatherArray.at(0);
+            tempObject = valWeather.toObject();
+            d->now9.setWeatherDescription(tempObject.value(QStringLiteral("description")).toString());
+            d->now9.setWeatherIcon(tempObject.value("icon").toString());
+            valMain = obj.value(QStringLiteral("main"));
+            tempObject = valMain.toObject();
+            valMain = tempObject.value(QStringLiteral("temp"));
+            d->now9.setTemperature(niceTemperatureString(valMain.toDouble()));
+        }
+        if (!(d->ready)) {
+            d->ready = true;
+            emit readyChanged();
+        }
         emit weatherChanged();
     }
     networkReply->deleteLater();
 }
 
-bool AppModel::hasValidCity() const
-{
-    return (!(d->city.isEmpty()) && d->city.size() > 1 && d->city != ""); //도시값이 비어있지 않고 도시크기값이 1보다 크고 도시의 스트링값이 비어있지 않으면 참을 리턴 즉 존재함을 보여주는 함수이다.
-}
 
 bool AppModel::hasValidWeather() const
 {
-    return hasValidCity() && (!(d->now.weatherIcon().isEmpty()) && //isEmpty 개체가 갖고있는 문자열이 비어 있는지 조사한다.
-                              (d->now.weatherIcon().size() > 1) &&
-                              d->now.weatherIcon() != "");
+    return (!(d->now5.weatherIcon().isEmpty()) && (d->now5.weatherIcon().size() > 1) && d->now5.weatherIcon() != "");
 }
-
+bool AppModel::hasValidWeather1() const
+{
+    return (!(d->now1.weatherIcon().isEmpty()) && (d->now1.weatherIcon().size() > 1) && d->now1.weatherIcon() != "");
+}
+bool AppModel::hasValidWeather2() const
+{
+    return (!(d->now2.weatherIcon().isEmpty()) && (d->now2.weatherIcon().size() > 1) && d->now2.weatherIcon() != "");
+}
+bool AppModel::hasValidWeather3() const
+{
+    return (!(d->now3.weatherIcon().isEmpty()) && (d->now3.weatherIcon().size() > 1) && d->now3.weatherIcon() != "");
+}
+bool AppModel::hasValidWeather4() const
+{
+    return (!(d->now4.weatherIcon().isEmpty()) && (d->now4.weatherIcon().size() > 1) && d->now4.weatherIcon() != "");
+}
+bool AppModel::hasValidWeather5() const
+{
+    d->tf = (!(d->now5.weatherIcon().isEmpty()) && (d->now5.weatherIcon().size() > 1) && d->now5.weatherIcon() != "");
+    return d->tf;
+}
+bool AppModel::hasValidWeather6() const
+{
+    return (!(d->now6.weatherIcon().isEmpty()) && (d->now6.weatherIcon().size() > 1) && d->now6.weatherIcon() != "");
+}
+bool AppModel::hasValidWeather7() const
+{
+    return (!(d->now7.weatherIcon().isEmpty()) && (d->now7.weatherIcon().size() > 1) && d->now7.weatherIcon() != "");
+}
+bool AppModel::hasValidWeather8() const
+{
+    return (!(d->now8.weatherIcon().isEmpty()) && (d->now8.weatherIcon().size() > 1) && d->now8.weatherIcon() != "");
+}
+bool AppModel::hasValidWeather9() const
+{
+    return (!(d->now9.weatherIcon().isEmpty()) && (d->now9.weatherIcon().size() > 1) && d->now9.weatherIcon() != "");
+}
 
 WeatherData *AppModel::weather() const
 {
-    return &(d->now);
+    return &(d->now5);
 }
-
-QQmlListProperty<WeatherData> AppModel::forecast() const
+WeatherData *AppModel::weather1() const
 {
-    return *(d->fcProp);
+    return &(d->now1);
+}
+WeatherData *AppModel::weather2() const
+{
+    return &(d->now2);
+}
+WeatherData *AppModel::weather3() const
+{
+    return &(d->now3);
+}
+WeatherData *AppModel::weather4() const
+{
+    return &(d->now4);
+}
+WeatherData *AppModel::weather5() const
+{
+    return &(d->now5);
+}
+WeatherData *AppModel::weather6() const
+{
+    return &(d->now6);
+}
+WeatherData *AppModel::weather7() const
+{
+    return &(d->now7);
+}
+WeatherData *AppModel::weather8() const
+{
+    return &(d->now8);
+}
+WeatherData *AppModel::weather9() const
+{
+    return &(d->now9);
 }
 
 bool AppModel::ready() const
 {
+    qCDebug(requestsLog) << "ready 함수";
     return d->ready;
 }
 
-bool AppModel::hasSource() const
+double AppModel::sendLatitude(double lat) //qml에서 경도값을 받아오는 set함수
 {
-    return (d->src != NULL);
+    d->coord.setLatitude(lat);
+    return lat;
+}
+double AppModel::sendLongitude(double lon) //qml에서 위도값을 받아오는 set함수
+{
+    d->coord.setLongitude(lon);
+    return lon;
 }
 
-bool AppModel::useGps() const
-{
-    return d->useGps;
-}
 
-void AppModel::setUseGps(bool value)
-{
-    d->useGps = value;
-    if (value) {
-        d->city = "";
-        d->throttle.invalidate();
-        emit cityChanged();
-        emit weatherChanged();
-    }
-    emit useGpsChanged();
-}
 
-QString AppModel::city() const
+void AppModel::myQmlSlot1()
 {
-    return d->city;
+    queryWeather1();
 }
-
-void AppModel::setCity(const QString &value)
+void AppModel::myQmlSlot2()
 {
-    d->city = value;
-    emit cityChanged();
-    refreshWeather();
+    queryWeather2();
+}
+void AppModel::myQmlSlot3()
+{
+    queryWeather3();
+}
+void AppModel::myQmlSlot4()
+{
+    queryWeather4();
+}
+void AppModel::myQmlSlot5()
+{
+    queryWeather5();
+}
+void AppModel::myQmlSlot6()
+{
+    queryWeather6();
+}
+void AppModel::myQmlSlot7()
+{
+    queryWeather7();
+}
+void AppModel::myQmlSlot8()
+{
+    queryWeather8();
+}
+void AppModel::myQmlSlot9()
+{
+    queryWeather9();
 }

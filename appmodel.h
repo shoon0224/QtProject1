@@ -55,55 +55,36 @@
 #include <QtCore/QString>
 #include <QtNetwork/QNetworkReply>
 #include <QtQml/QQmlListProperty>
-
+#include <QQuickView>
 #include <QtPositioning/QGeoPositionInfoSource>
 
-//! [0]
-class WeatherData : public QObject { //QObject를 상속 받은 WeatherData 클래스 선언
+class WeatherData : public QObject {
     Q_OBJECT
-    Q_PROPERTY(QString dayOfWeek
-               READ dayOfWeek WRITE setDayOfWeek
-               NOTIFY dataChanged)
-    //QString 타입 설정값 dayOfWeek를 qml로 전달
-    //Q_PROPERTY(type name READ name WRITE setname NOTIFY nameChanged)
-    //타입(type)과 읽을 때 함수(READ), 수정 시 함수(WRITE), 변경 시 호출할 시그널(NOTIFY) 작성
-    //public으로 가서 QString dayOfWeek(); 선언
-
-    Q_PROPERTY(QString weatherIcon
-               READ weatherIcon WRITE setWeatherIcon
-               NOTIFY dataChanged)
-    Q_PROPERTY(QString weatherDescription
-               READ weatherDescription WRITE setWeatherDescription
-               NOTIFY dataChanged)
-    Q_PROPERTY(QString temperature
-               READ temperature WRITE setTemperature
-               NOTIFY dataChanged)
+    Q_PROPERTY(QString weatherIcon READ weatherIcon WRITE setWeatherIcon NOTIFY dataChanged)
+    Q_PROPERTY(QString weatherDescription READ weatherDescription WRITE setWeatherDescription NOTIFY dataChanged)
+    Q_PROPERTY(QString temperature READ temperature WRITE setTemperature NOTIFY dataChanged)
 
 public:
     explicit WeatherData(QObject *parent = 0);
     WeatherData(const WeatherData &other);
 
-    QString dayOfWeek() const; //함수 작성
     QString weatherIcon() const;
     QString weatherDescription() const;
     QString temperature() const;
 
-    void setDayOfWeek(const QString &value);//함수작성
     void setWeatherIcon(const QString &value);
     void setWeatherDescription(const QString &value);
     void setTemperature(const QString &value);
 
 signals:
     void dataChanged();
-//! [0]
 private:
-    QString m_dayOfWeek;
     QString m_weather;
     QString m_weatherDescription;
     QString m_temperature;
-//! [1]
+
 };
-//! [1]
+
 
 Q_DECLARE_METATYPE(WeatherData)
 
@@ -112,76 +93,102 @@ class AppModelPrivate;
 class AppModel : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(bool ready
-               READ ready
-               NOTIFY readyChanged)
-    Q_PROPERTY(bool hasSource
-               READ hasSource
-               NOTIFY readyChanged)
-    Q_PROPERTY(bool hasValidCity
-               READ hasValidCity
-               NOTIFY cityChanged)
-    Q_PROPERTY(bool hasValidWeather
-               READ hasValidWeather
-               NOTIFY weatherChanged)
-    Q_PROPERTY(bool useGps
-               READ useGps WRITE setUseGps
-               NOTIFY useGpsChanged)
-    Q_PROPERTY(QString city
-               READ city WRITE setCity
-               NOTIFY cityChanged)
-    Q_PROPERTY(WeatherData *weather
-               READ weather
-               NOTIFY weatherChanged)
-    Q_PROPERTY(QQmlListProperty<WeatherData> forecast
-               READ forecast
-               NOTIFY weatherChanged)
+    Q_PROPERTY(bool ready READ ready NOTIFY readyChanged)
+    Q_PROPERTY(bool hasValidWeather READ hasValidWeather NOTIFY weatherChanged)
+    Q_PROPERTY(bool hasValidWeather1 READ hasValidWeather1 NOTIFY weatherChanged)
+    Q_PROPERTY(bool hasValidWeather2 READ hasValidWeather2 NOTIFY weatherChanged)
+    Q_PROPERTY(bool hasValidWeather3 READ hasValidWeather3 NOTIFY weatherChanged)
+    Q_PROPERTY(bool hasValidWeather4 READ hasValidWeather4 NOTIFY weatherChanged)
+    Q_PROPERTY(bool hasValidWeather5 READ hasValidWeather5 NOTIFY weatherChanged)
+    Q_PROPERTY(bool hasValidWeather6 READ hasValidWeather6 NOTIFY weatherChanged)
+    Q_PROPERTY(bool hasValidWeather7 READ hasValidWeather7 NOTIFY weatherChanged)
+    Q_PROPERTY(bool hasValidWeather8 READ hasValidWeather8 NOTIFY weatherChanged)
+    Q_PROPERTY(bool hasValidWeather9 READ hasValidWeather9 NOTIFY weatherChanged)
+    Q_PROPERTY(WeatherData *weather READ weather NOTIFY weatherChanged)
+    Q_PROPERTY(WeatherData *weather1 READ weather1 NOTIFY weatherChanged)
+    Q_PROPERTY(WeatherData *weather2 READ weather2 NOTIFY weatherChanged)
+    Q_PROPERTY(WeatherData *weather3 READ weather3 NOTIFY weatherChanged)
+    Q_PROPERTY(WeatherData *weather4 READ weather4 NOTIFY weatherChanged)
+    Q_PROPERTY(WeatherData *weather5 READ weather5 NOTIFY weatherChanged)
+    Q_PROPERTY(WeatherData *weather6 READ weather6 NOTIFY weatherChanged)
+    Q_PROPERTY(WeatherData *weather7 READ weather7 NOTIFY weatherChanged)
+    Q_PROPERTY(WeatherData *weather8 READ weather8 NOTIFY weatherChanged)
+    Q_PROPERTY(WeatherData *weather9 READ weather9 NOTIFY weatherChanged)
 
 public:
-    explicit AppModel(QObject *parent = 0);
+    explicit AppModel(QObject *pardnt = 0); //explicit 자신이 원하지 않은 형변환이 일어나지 않도록 제한하는 키워드
     ~AppModel();
-
     bool ready() const;
-    bool hasSource() const;
-    bool useGps() const;
-    bool hasValidCity() const;
     bool hasValidWeather() const;
-    void setUseGps(bool value);
-    void hadError(bool tryAgain);
-
-    QString city() const;
-    void setCity(const QString &value);
+    bool hasValidWeather1() const;
+    bool hasValidWeather2() const;
+    bool hasValidWeather3() const;
+    bool hasValidWeather4() const;
+    bool hasValidWeather5() const;
+    bool hasValidWeather6() const;
+    bool hasValidWeather7() const;
+    bool hasValidWeather8() const;
+    bool hasValidWeather9() const;
 
     WeatherData *weather() const;
-    QQmlListProperty<WeatherData> forecast() const;
+    WeatherData *weather1() const;
+    WeatherData *weather2() const;
+    WeatherData *weather3() const;
+    WeatherData *weather4() const;
+    WeatherData *weather5() const;
+    WeatherData *weather6() const;
+    WeatherData *weather7() const;
+    WeatherData *weather8() const;
+    WeatherData *weather9() const;
+
 
 public slots:
-    Q_INVOKABLE void refreshWeather();
+    double sendLatitude(double lat);
+    double sendLongitude(double lon);
+    void myQmlSlot1();
+    void myQmlSlot2();
+    void myQmlSlot3();
+    void myQmlSlot4();
+    void myQmlSlot5();
+    void myQmlSlot6();
+    void myQmlSlot7();
+    void myQmlSlot8();
+    void myQmlSlot9();
 
-//! [2]
 private slots:
-    void queryCity(); //쿼리시티 멤버함수는 QObject를 상속 받은 AppModel클래스의 멤버함수이다.
-    void networkSessionOpened();
-    void positionUpdated(QGeoPositionInfo gpsPos);
-    void positionError(QGeoPositionInfoSource::Error e);
-    void handleGeoNetworkData(QNetworkReply *networkReply);
-    void handleWeatherNetworkData(QNetworkReply *networkReply);
-    void handleForecastNetworkData(QNetworkReply *networkReply);
+    void queryWeather1();
+    void queryWeather2();
+    void queryWeather3();
+    void queryWeather4();
+    void queryWeather5();
+    void queryWeather6();
+    void queryWeather7();
+    void queryWeather8();
+    void queryWeather9();
 
-//! [3]
+    void networkSessionOpened();
+
+    void handleWeatherNetworkData1(QNetworkReply *networkReply);
+    void handleWeatherNetworkData2(QNetworkReply *networkReply);
+    void handleWeatherNetworkData3(QNetworkReply *networkReply);
+    void handleWeatherNetworkData4(QNetworkReply *networkReply);
+    void handleWeatherNetworkData5(QNetworkReply *networkReply);
+    void handleWeatherNetworkData6(QNetworkReply *networkReply);
+    void handleWeatherNetworkData7(QNetworkReply *networkReply);
+    void handleWeatherNetworkData8(QNetworkReply *networkReply);
+    void handleWeatherNetworkData9(QNetworkReply *networkReply);
+
+
+
 signals:
     void readyChanged();
-    void useGpsChanged();
-    void cityChanged();
     void weatherChanged();
 
-//! [3]
 
 private:
     AppModelPrivate *d;
 
-//! [4]
 };
-//! [4]
+
 
 #endif // APPMODEL_H
