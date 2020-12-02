@@ -56,7 +56,6 @@
 #include <qgeopositioninfo.h>
 #include <qnetworkconfigmanager.h>
 #include <qnetworksession.h>
-
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
@@ -355,17 +354,18 @@ void AppModel::handleGeoNetworkData(QNetworkReply *networkReply)
 
     if (!networkReply->error()) {
         d->nErrors = 0;
-        if (!d->throttle.isValid())
-            d->throttle.start();
+        if (!d->throttle.isValid()) // isValid 데이터가 유효하지 않은 경우 0, 그렇지 않은경우 1을 반환한다.
+            d->throttle.start();//객체d의 쓰레드에게 작업지시
         d->minMsBeforeNewRequest = d->baseMsBeforeNewRequest;
-        //convert coordinates to city name
+        //convert coordinates to city name //좌표를 도시이름으로 변환하는 코드
+        /*******************************************************/
         QJsonDocument document = QJsonDocument::fromJson(networkReply->readAll());
 
         QJsonObject jo = document.object();
         QJsonValue jv = jo.value(QStringLiteral("name"));
 
         const QString city = jv.toString();
-        qCDebug(requestsLog) << "got city: " << city; //좌표를 도시로 변환하는 것 같은 의심코드
+        qCDebug(requestsLog) << "got city: " << city;
         if (city != d->city) {
             d->city = city;
             emit cityChanged();
