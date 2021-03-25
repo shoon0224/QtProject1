@@ -1,0 +1,3 @@
+#repository language change
+* linguist-vendored
+*.qml linguist-vendored=false
